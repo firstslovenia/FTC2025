@@ -15,7 +15,7 @@ import java.util.Vector;
 
 public class MeepMeepTesting {
     // Bot Params
-    private static final boolean isRed = true;
+    private static final boolean isRed = false;
     private static final boolean isBasketBot = true;
 
     // Flip angle if red

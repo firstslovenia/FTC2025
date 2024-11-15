@@ -31,16 +31,14 @@ package org.firstinspires.ftc.teamcode.vegamind;
 
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.LOGO_FACING_DIR;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.USB_FACING_DIR;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 // import si.vegamind.coyotecore.motion.MotionManager;
 // import si.vegamind.coyotecore.motion.MotorMoveBuilder;
@@ -63,34 +61,41 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 // @Disabled
 public class PrimaryTeleop extends OpMode {
     // Declare OpMode members
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
+
+    // Robot
+    private AnalogInput armPotentiometer;
+    private DcMotor armMotor;
+    private DcMotor lifterMotor;
+
+    // Mechanisms
+    private Arm arm;
+    private Lifter lifter;
+    private TeleopMecanumDrive mecanumDrive;
 
     private IMU imu;
     IMU.Parameters imuParameters = new IMU.Parameters(new RevHubOrientationOnRobot(
             LOGO_FACING_DIR,
             USB_FACING_DIR));
 
-    private TeleopMecanumDrive mecanumDrive;
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
-        mecanumDrive = new TeleopMecanumDrive(hardwareMap);
+        // MAPPING ---------------------------------------------------------------------------------
+        armMotor = hardwareMap.get(DcMotor.class, "armMotor");
+        armPotentiometer = hardwareMap.get(AnalogInput.class, "armPotentiometer");
+
+        lifterMotor = hardwareMap.get(DcMotor.class, "lifterMotor");
+
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(imuParameters);
 
-        // CoyoteCore
-        //MotionManager.addMotion(new MotorMoveBuilder("test motor move", "test_motor", 1f)
-        //        .setOnComplete(() -> {
-        //            telemetry.addData("RUNNING MOTOR", "YES SIR");
-        //            MotionManager.startMotion("test motor move");
-        //        })
-        //        .setExitCondition(() -> {
-        //            return gamepad1.cross;
-        //        })
-        //
-        //        .build());
+        // MECHANISMS INIT -------------------------------------------------------------------------
+        mecanumDrive = new TeleopMecanumDrive(hardwareMap, imu);
+        arm = new Arm(armMotor, armPotentiometer);
+        lifter = new Lifter(lifterMotor);
     }
 
     /*
@@ -112,31 +117,41 @@ public class PrimaryTeleop extends OpMode {
      */
     @Override
     public void loop() {
-        // Movement
-        // Reset field centric rotation
-        if (gamepad1.options) {
-            imu.resetYaw();
-        }
+        // INPUTS ----------------------------------------------------------------------------------
+        // Drive
+        if (gamepad1.options) imu.resetYaw();
+        double rotation = -gamepad1.right_stick_x;
+        double forward = -gamepad1.left_stick_y;
+        double strafe = gamepad1.left_stick_x;
 
-        double rot = -gamepad1.right_stick_x;       // Rotation
-        double forward = -gamepad1.left_stick_y;     // Forward power
-        double strafe = gamepad1.left_stick_x;     // Strafe power
+        // Arm
+        double armTargetChange = gamepad2.left_stick_y;
+        boolean armEBrake = gamepad2.dpad_left;
 
-        double robotDirection = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        // Lifter
+        double lifterTargetLength = gamepad2.right_stick_y;
+        boolean lifterEBrake = gamepad2.dpad_right;
 
-        double rotX = strafe * Math.cos(-robotDirection) - forward * Math.sin(-robotDirection);
-        double rotY = strafe * Math.sin(-robotDirection) + forward * Math.cos(-robotDirection);
+        // RUN ROBOT -------------------------------------------------------------------------------
+        mecanumDrive.run(strafe, forward, rotation);
+        arm.run(armTargetChange, armEBrake);
+        lifter.run(lifterTargetLength, lifterEBrake);
 
-        Pose2d move = new Pose2d(
-                rot,
-                rotY,
-                rotX
-        );
-        mecanumDrive.drive(move);
+        // TELEMETRY -------------------------------------------------------------------------------
+        telemetry.addLine("Main TeleOP");
 
-        // Telemetry
-        telemetry.addLine("TeleOP");
-        telemetry.addData("Robot Direction", robotDirection);
+        telemetry.addLine("Arm");
+        telemetry.addData("Pos", arm.getPos());
+        telemetry.addData("Target", arm.getTarget());
+        telemetry.addData("Motor Power", armMotor.getPower());
+
+        telemetry.addLine();
+
+        telemetry.addLine("Lifter");
+        telemetry.addData("Pos", lifter.getCurrentLength());
+        telemetry.addData("Target", lifter.getTargetLength());
+        telemetry.addData("Motor Power", lifterMotor.getPower());
+
         telemetry.update();
     }
 
@@ -145,6 +160,6 @@ public class PrimaryTeleop extends OpMode {
      */
     @Override
     public void stop() {
-    }
 
+    }
 }

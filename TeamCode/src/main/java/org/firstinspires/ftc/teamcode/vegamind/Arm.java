@@ -7,7 +7,7 @@ import lombok.Getter;
 
 public class Arm {
     // PID
-    private final double kP = 1;
+    private final double kP = 1.2;
     private final double kD = 0.1;
     private double eD = 0;
 

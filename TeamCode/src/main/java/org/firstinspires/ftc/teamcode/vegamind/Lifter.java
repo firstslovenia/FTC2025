@@ -8,7 +8,7 @@ import si.vegamind.coyotecore.motion.motor.Motor;
 public class Lifter {
     // Params
     private final double stringWinderR = 17.5;
-    private final double maxLength = 120;
+    private final double maxLength = 10;
 
     @Getter
     private double currentLength = 0;
@@ -19,7 +19,9 @@ public class Lifter {
     private DcMotor motor;
 
     public Lifter(DcMotor motor) {
+        this.motor = motor;
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setTargetPosition(0);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
@@ -30,10 +32,10 @@ public class Lifter {
 
     public void run(double input) {
         // NOTE: 1 rotation = 28 ticks then convert to circumference of string winder
-        currentLength = motor.getCurrentPosition() / 28 * (2 * Math.PI * stringWinderR); // Calculated for use in telemetry
+        currentLength = motor.getCurrentPosition(); // Calculated for use in telemetry
 
         targetLength = VUtils.clamp(input + targetLength, 0, maxLength);
-        motor.setTargetPosition((int) (28 * targetLength / (2 * Math.PI * stringWinderR)));
+        motor.setTargetPosition((int) (28 * targetLength));
         motor.setPower(1); // CHECK: Does actually work instead of velocity?
     }
 }

@@ -129,18 +129,28 @@ public class PrimaryTeleop extends OpMode {
         boolean armEBrake = gamepad2.dpad_left;
 
         // Lifter
-        double lifterTargetLength = gamepad2.right_stick_y;
+        double lifterTargetLength = gamepad2.right_stick_y * 20;
         boolean lifterEBrake = gamepad2.dpad_right;
 
         // RUN ROBOT -------------------------------------------------------------------------------
         mecanumDrive.run(strafe, forward, rotation);
-        arm.run(armTargetChange, armEBrake);
+        //arm.run(armTargetChange, armEBrake);
+        if (gamepad2.triangle) {
+            arm.run(0);
+        }
+        else if (gamepad2.circle) {
+            arm.run(1);
+        }
+        else if (gamepad2.cross) {
+
+        }
         lifter.run(lifterTargetLength, lifterEBrake);
 
         // TELEMETRY -------------------------------------------------------------------------------
         telemetry.addLine("Main TeleOP");
 
         telemetry.addLine("Arm");
+
         telemetry.addData("Pos", arm.getPos());
         telemetry.addData("Target", arm.getTarget());
         telemetry.addData("Motor Power", armMotor.getPower());

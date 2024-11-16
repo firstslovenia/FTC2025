@@ -8,7 +8,7 @@ import si.vegamind.coyotecore.motion.motor.Motor;
 public class Lifter {
     // Params
     private final double stringWinderR = 17.5;
-    private final double maxLength = 10;
+    private final double maxLength = 5300;
 
     @Getter
     private double currentLength = 0;
@@ -35,7 +35,7 @@ public class Lifter {
         currentLength = motor.getCurrentPosition(); // Calculated for use in telemetry
 
         targetLength = VUtils.clamp(input + targetLength, 0, maxLength);
-        motor.setTargetPosition((int) (28 * targetLength));
+        motor.setTargetPosition((int) (targetLength));
         motor.setPower(1); // CHECK: Does actually work instead of velocity?
     }
 }

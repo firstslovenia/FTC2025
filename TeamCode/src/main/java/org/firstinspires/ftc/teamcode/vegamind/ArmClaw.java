@@ -9,7 +9,7 @@ public class ArmClaw {
         this.servo = servo;
     }
 
-    public void run() {
+    public void run(Boolean input) {
 
     }
 }

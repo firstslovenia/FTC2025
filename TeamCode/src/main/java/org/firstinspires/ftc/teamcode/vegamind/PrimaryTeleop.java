@@ -29,16 +29,17 @@
 
 package org.firstinspires.ftc.teamcode.vegamind;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.LOGO_FACING_DIR;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.USB_FACING_DIR;
-
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 // import si.vegamind.coyotecore.motion.MotionManager;
 // import si.vegamind.coyotecore.motion.MotorMoveBuilder;
@@ -60,42 +61,38 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp(name = "Primary Op Mode", group = "Testing")
 // @Disabled
 public class PrimaryTeleop extends OpMode {
-    // Declare OpMode members
-    private final ElapsedTime runtime = new ElapsedTime();
 
-    // Robot
-    private AnalogInput armPotentiometer;
-    private DcMotor armMotor;
-    private DcMotor lifterMotor;
 
-    // Mechanisms
-    private Arm arm;
-    private Lifter lifter;
-    private TeleopMecanumDrive mecanumDrive;
-
-    private IMU imu;
-    IMU.Parameters imuParameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-            LOGO_FACING_DIR,
-            USB_FACING_DIR));
-
+    //IMU imu;
     /*
      * Code to run ONCE when the driver hits INIT
      */
+
+    private Lifter lifter;
+    private Gestell gestell;
+
+    void initIMU() {
+        /*IMU.Parameters parameters;
+
+        parameters = new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+                )
+        );
+
+        imu = hardwareMap.get(IMU.class, "imu1");
+
+        imu.initialize(parameters);*/
+    }
+
     @Override
     public void init() {
-        // MAPPING ---------------------------------------------------------------------------------
-        armMotor = hardwareMap.get(DcMotor.class, "armMotor");
-        armPotentiometer = hardwareMap.get(AnalogInput.class, "armPotentiometer");
 
-        lifterMotor = hardwareMap.get(DcMotor.class, "lifterMotor");
+        lifter = new Lifter(hardwareMap, telemetry, gamepad1);
+        gestell = new Gestell(hardwareMap, gamepad1, telemetry);
 
-        imu = hardwareMap.get(IMU.class, "imu");
-        imu.initialize(imuParameters);
-
-        // MECHANISMS INIT -------------------------------------------------------------------------
-        mecanumDrive = new TeleopMecanumDrive(hardwareMap, imu);
-        arm = new Arm(armMotor, armPotentiometer);
-        lifter = new Lifter(lifterMotor);
+        initIMU();
     }
 
     /*
@@ -109,7 +106,7 @@ public class PrimaryTeleop extends OpMode {
      * Code to run ONCE when the driver hits START
      */
     public void start() {
-        runtime.reset();
+
     }
 
     /*
@@ -117,52 +114,51 @@ public class PrimaryTeleop extends OpMode {
      */
     @Override
     public void loop() {
-        // INPUTS ----------------------------------------------------------------------------------
-        // Drive
-        if (gamepad1.options) imu.resetYaw();
-        double rotation = -gamepad1.right_stick_x;
-        double forward = -gamepad1.left_stick_y;
-        double strafe = gamepad1.left_stick_x;
+        lifter.update();
+        gestell.update();
+    }
 
-        // Arm
-        double armTargetChange = gamepad2.left_stick_y;
-        boolean armEBrake = gamepad2.dpad_left;
 
-        // Lifter
-        double lifterTargetLength = gamepad2.right_stick_y * 20;
-        boolean lifterEBrake = gamepad2.dpad_right;
+//0 left 1 right
+    @Deprecated
+    boolean homingSequence(DcMotor targetMotor) {
+        telemetry.addLine("Running Homing Sequence for Motor: " + targetMotor.getDeviceName());
+        float tolerance = 0.1f;
+        float homingPower = 0.2f;
 
-        // RUN ROBOT -------------------------------------------------------------------------------
-        mecanumDrive.run(strafe, forward, rotation);
-        //arm.run(armTargetChange, armEBrake);
-        if (gamepad2.triangle) {
-            arm.run(0);
+        int prev_position = targetMotor.getCurrentPosition();
+
+        ElapsedTime stopwatch = null;
+        ElapsedTime globalSequenceWatch = new ElapsedTime();
+
+        while (true) {
+            //TODO: Change the homing allowed time value here to the actual time, this is just a rough estimate
+            if (globalSequenceWatch.milliseconds() >= 25000) {
+                //Homing failed / Took too long
+                telemetry.addLine("Homing sequence failed for Motor: " + targetMotor.getDeviceName());
+                return false;
+            }
+
+            //Move Motor down
+            targetMotor.setPower(homingPower);
+
+            if(targetMotor.getCurrentPosition() == prev_position){
+                if (stopwatch == null) {
+                    stopwatch = new ElapsedTime();
+                } else {
+                    if (stopwatch.milliseconds() > 100) {
+                        targetMotor.setPower(0);
+                        break;
+                    }
+                }
+            } else {
+                stopwatch = null;
+            }
+            prev_position = targetMotor.getCurrentPosition();
         }
-        else if (gamepad2.circle) {
-            arm.run(1);
-        }
-        else if (gamepad2.cross) {
 
-        }
-        lifter.run(lifterTargetLength, lifterEBrake);
-
-        // TELEMETRY -------------------------------------------------------------------------------
-        telemetry.addLine("Main TeleOP");
-
-        telemetry.addLine("Arm");
-
-        telemetry.addData("Pos", arm.getPos());
-        telemetry.addData("Target", arm.getTarget());
-        telemetry.addData("Motor Power", armMotor.getPower());
-
-        telemetry.addLine();
-
-        telemetry.addLine("Lifter");
-        telemetry.addData("Pos", lifter.getCurrentLength());
-        telemetry.addData("Target", lifter.getTargetLength());
-        telemetry.addData("Motor Power", lifterMotor.getPower());
-
-        telemetry.update();
+        telemetry.addLine("Homing sequence successful for Motor: " + targetMotor.getDeviceName());
+        return true;
     }
 
     /*

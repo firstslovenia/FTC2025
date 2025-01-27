@@ -5,13 +5,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import lombok.Getter;
 
 public class Button {
-
     @Getter
-    boolean state;
+    private boolean state;
 
-    ElapsedTime since_last_change;
+    private ElapsedTime since_last_change;
 
-    final int debounce_time = 50; // in MS
+    private final int debounce_time = 50; // in MS
 
     public Button(){
         since_last_change = new ElapsedTime();

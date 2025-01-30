@@ -34,16 +34,21 @@ public abstract class AbstractTeleop extends OpMode {
      */
     @Override
     public void loop() {
+        InputMapper.update();
+
         // Imu Reset
         if (InputMapper.isImuReset()) Hardware.getImu().resetYaw();
 
         // Run Mechanisms
-        drivetrain.run(InputMapper.getDriveY() * (1 - gamepad1.right_trigger * 0.7), InputMapper.getDriveX() * (1 - gamepad1.right_trigger * 0.7), InputMapper.getDriveRot());
-        lifter.run();
+        drivetrain.run(InputMapper.getDriveY(), InputMapper.getDriveX(), InputMapper.getDriveRot());
+        lifter.run(InputMapper.getLifterY());
 
         // Telemetry
         updateTelemetry();
         telemetry.update();
+        telemetry.addData("Y", InputMapper.getDriveY());
+        telemetry.addData("X", InputMapper.getDriveX());
+        telemetry.addData("R", InputMapper.getDriveRot());
     }
 
     /*

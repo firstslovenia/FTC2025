@@ -5,7 +5,10 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gam
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-public class PrimaryInputMap implements InputMap {
+public class PrimaryInputMap extends InputMap {
+    public PrimaryInputMap(Gamepad gamepad1, Gamepad gamepad2) {
+        super(gamepad1, gamepad2);
+    }
 
     @Override
     public double readDriveX() {

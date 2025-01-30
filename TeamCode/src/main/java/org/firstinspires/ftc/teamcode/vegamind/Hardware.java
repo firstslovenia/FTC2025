@@ -34,7 +34,7 @@ public class Hardware {
             LOGO_FACING_DIR,
             USB_FACING_DIR));
 
-    public static void init() {
+    public static void init(HardwareMap hardwareMap) {
         // Imu
         imu = hardwareMap.get(IMU .class, "imu");
         imu.initialize(imuParameters);
@@ -44,11 +44,21 @@ public class Hardware {
         leftFrontMotor = hardwareMap.dcMotor.get("leftFront");
         rightRearMotor = hardwareMap.dcMotor.get("rightRear");
         rightFrontMotor = hardwareMap.dcMotor.get("rightFront");
+
         rightRearMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        // Lifter Motors
         lifterLeftMotor = hardwareMap.dcMotor.get("liftLeft");
         lifterRightMotor = hardwareMap.dcMotor.get("liftRight");
+
+        lifterLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lifterRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        lifterLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lifterRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         lifterRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
     }
 }

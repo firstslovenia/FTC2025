@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.vegamind.input;
 import lombok.Getter;
 
 public class InputMapper {
-    private static InputMap inputMap = new PrimaryInputMap();
+    private static InputMap inputMap;
 
     @Getter
     private static double driveX;

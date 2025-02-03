@@ -30,6 +30,10 @@ public class Hardware {
     @Getter
     private static DcMotor lifterRightMotor;
     @Getter
+    private static DcMotor horizontalLiftLeftMotor;
+    @Getter
+    private static DcMotor horizontalLiftRightMotor;
+    @Getter
     private static TouchSensor lifterSensorLeft;
     @Getter
     private static TouchSensor lifterSensorRight;
@@ -67,6 +71,16 @@ public class Hardware {
 
         lifterSensorRight = hardwareMap.get(TouchSensor.class, "sensorRight");
         lifterSensorLeft = hardwareMap.get(TouchSensor.class, "sensorLeft");
+
+        //Horizontal Lift Motors
+        horizontalLiftLeftMotor = hardwareMap.dcMotor.get("horizontalLeft");
+        horizontalLiftRightMotor = hardwareMap.dcMotor.get("horizontalRight");
+
+        horizontalLiftLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        horizontalLiftRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        horizontalLiftLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        horizontalLiftRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 }

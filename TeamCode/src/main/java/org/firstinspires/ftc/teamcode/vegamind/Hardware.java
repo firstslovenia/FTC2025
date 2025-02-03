@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import lombok.Getter;
 
@@ -28,6 +29,10 @@ public class Hardware {
     private static DcMotor lifterLeftMotor;
     @Getter
     private static DcMotor lifterRightMotor;
+    @Getter
+    private static TouchSensor lifterSensorLeft;
+    @Getter
+    private static TouchSensor lifterSensorRight;
 
     @Getter
     private static IMU.Parameters imuParameters = new IMU.Parameters(new RevHubOrientationOnRobot(
@@ -59,6 +64,9 @@ public class Hardware {
         lifterRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         lifterRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        lifterSensorRight = hardwareMap.get(TouchSensor.class, "sensorRight");
+        lifterSensorLeft = hardwareMap.get(TouchSensor.class, "sensorLeft");
 
     }
 }

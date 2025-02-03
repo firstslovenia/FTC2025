@@ -17,7 +17,13 @@ public class Lifter {
     private final DcMotor lifterLeft;
     private final DcMotor lifterRight;
 
+    private final TouchSensor sensorLeft;
+    private final TouchSensor sensorRight;
+
     private final double MAX_HEIGHT = 3500;
+
+    private boolean last_reset_left = false;
+    private boolean last_reset_right = false;
 
     public Lifter() {
         lifterLeft = Hardware.getLifterLeftMotor();
@@ -26,16 +32,21 @@ public class Lifter {
         lifterRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lifterLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lifterRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        sensorLeft = Hardware.getLifterSensorLeft();
+        sensorRight = Hardware.getLifterSensorRight();
     }
 
     private double calculatePower(double motor1, double motor2, double inputY) {
         double dist = (motor1 / MAX_HEIGHT - motor2 / MAX_HEIGHT);
-        double power = (0.9 + Vtils.clamp(0.1 * dist * 500, -0.1, 0.1)) * inputY;
+        double power = (0.9 + Vtils.clamp(-0.1 * dist * 100, -0.1, 0.1)) * inputY;
         if ((power > 0 && motor1 >= MAX_HEIGHT) || (power < 0 && motor1 < 0)) return 0;
-        return --power;
+        return power;
     }
 
     public void run(double inputY) {
+
+
         double posLeft = lifterLeft.getCurrentPosition();
         double posRight = lifterRight.getCurrentPosition();
 
@@ -45,7 +56,24 @@ public class Lifter {
         BetterTelemetry.print("Pow Left", calculatePower(posLeft, posRight, inputY));
         BetterTelemetry.print("Pow Right", calculatePower(posRight, posLeft, inputY));
 
+        BetterTelemetry.print("sl", sensorLeft.isPressed());
+        BetterTelemetry.print("sr", sensorRight.isPressed());
+
+
+        if(sensorLeft.isPressed() && !last_reset_left) {
+            lifterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            lifterLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
+        if (sensorRight.isPressed() && !last_reset_right) {
+            lifterRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            lifterRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
         lifterLeft.setPower(calculatePower(posLeft, posRight, inputY));
         lifterRight.setPower(calculatePower(posRight, posLeft, inputY));
+
+        last_reset_left = sensorLeft.isPressed();
+        last_reset_right = sensorRight.isPressed();
     }
 }

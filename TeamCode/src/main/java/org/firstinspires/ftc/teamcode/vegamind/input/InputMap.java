@@ -19,4 +19,6 @@ public abstract class InputMap {
     abstract public boolean readImuReset();
 
     abstract public double readLifterY();
+
+    abstract public boolean readClaw();
 }

@@ -34,4 +34,9 @@ public class PrimaryInputMap extends InputMap {
     public double readLifterY() {
         return gamepad2.right_stick_y;
     }
+
+    @Override
+    public boolean readClaw() {
+        return gamepad2.right_stick_button;
+    }
 }

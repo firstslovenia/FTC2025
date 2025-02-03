@@ -41,14 +41,14 @@ public abstract class AbstractTeleop extends OpMode {
 
         // Run Mechanisms
         drivetrain.run(InputMapper.getDriveY(), InputMapper.getDriveX(), InputMapper.getDriveRot());
-        lifter.run(InputMapper.getLifterY());
+        lifter.run(InputMapper.getLifterY(), InputMapper.getClaw());
 
         // Telemetry
         updateTelemetry();
         telemetry.update();
-        telemetry.addData("Y", InputMapper.getDriveY());
+        /*telemetry.addData("Y", InputMapper.getDriveY());
         telemetry.addData("X", InputMapper.getDriveX());
-        telemetry.addData("R", InputMapper.getDriveRot());
+        telemetry.addData("R", InputMapper.getDriveRot());*/
     }
 
     /*

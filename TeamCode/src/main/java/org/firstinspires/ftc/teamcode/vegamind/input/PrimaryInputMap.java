@@ -39,4 +39,24 @@ public class PrimaryInputMap extends InputMap {
     public boolean readVerticalLifterClaw() {
         return gamepad2.right_stick_button;
     }
+
+    @Override
+    public double readHorizontalLifterX() {
+        return gamepad2.left_stick_x;
+    }
+
+    @Override
+    public boolean readHorizontalLifterClaw() {
+        return gamepad2.left_stick_button;
+    }
+
+    @Override
+    public boolean readHorizontalSwivelPrime() {
+        return gamepad2.x;
+    }
+
+    @Override
+    public boolean readTransferSequenceInit() {
+        return gamepad2.b;
+    }
 }

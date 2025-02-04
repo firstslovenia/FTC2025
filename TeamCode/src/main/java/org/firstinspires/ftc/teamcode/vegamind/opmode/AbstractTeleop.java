@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.vegamind.Hardware;
-import org.firstinspires.ftc.teamcode.vegamind.Lifter;
+import org.firstinspires.ftc.teamcode.vegamind.Lifter.Lifter;
 import org.firstinspires.ftc.teamcode.vegamind.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.vegamind.input.InputMapper;
 
@@ -40,8 +40,8 @@ public abstract class AbstractTeleop extends OpMode {
         if (InputMapper.isImuReset()) Hardware.getImu().resetYaw();
 
         // Run Mechanisms
-        drivetrain.run(InputMapper.getDriveY(), InputMapper.getDriveX(), InputMapper.getDriveRot());
-        lifter.run(InputMapper.getLifterY(), InputMapper.getClaw());
+        drivetrain.run();
+        lifter.run();
 
         // Telemetry
         updateTelemetry();

@@ -15,9 +15,9 @@ public class InputMapper {
     private static boolean imuReset;
 
     @Getter
-    private static double lifterY;
+    private static double verticalLifterY;
     @Getter
-    private static boolean claw;
+    private static boolean verticalLifterClaw;
 
     public static void init(InputMap inputMapToSet) {
         inputMap = inputMapToSet;
@@ -29,11 +29,11 @@ public class InputMapper {
         driveRot = inputMap.readDriveRot();
         imuReset = inputMap.readImuReset();
 
-        lifterY = inputMap.readLifterY();
-        claw = inputMap.readClaw();
+        verticalLifterY = inputMap.readVerticalLifterY();
+        verticalLifterClaw = inputMap.readVerticalLifterClaw();
     }
 
-    public static boolean getClaw() { // VID PROSIM POGLEJ ZAKAJ TA GOD FORSAKEN LOMBOK NE DELA
-        return claw;
+    public static boolean getVerticalLifterClaw() { //LOMBOK NE DELA *shrug*
+        return verticalLifterClaw;
     }
 }

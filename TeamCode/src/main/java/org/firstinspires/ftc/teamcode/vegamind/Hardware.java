@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.vegamind;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.LOGO_FACING_DIR;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.USB_FACING_DIR;
 
@@ -27,15 +26,28 @@ public class Hardware {
     @Getter
     private static DcMotor rightFrontMotor;
     @Getter
-    private static DcMotor lifterLeftMotor;
+    private static DcMotor verticalLiftLeftMotor;
     @Getter
-    private static DcMotor lifterRightMotor;
+    private static DcMotor verticalLiftRightMotor;
     @Getter
-    private static TouchSensor lifterSensorLeft;
+    private static TouchSensor verticalLiftSensorLeft;
     @Getter
-    private static TouchSensor lifterSensorRight;
+    private static TouchSensor verticalLiftSensorRight;
     @Getter
-    private static Servo liftClaw;
+    private static Servo verticalLiftClaw;
+    @Getter
+    private static DcMotor horizontalLiftLeftMotor;
+    @Getter
+    private static DcMotor horizontalLiftRightMotor;
+    @Getter
+    private static TouchSensor horizontalLiftSensorLeft;
+    @Getter
+    private static TouchSensor horizontalLiftSensorRight;
+    @Getter
+    private static Servo horizontalLiftClaw;
+    @Getter
+    private static Servo horizontalSwivel;
+
 
     @Getter
     private static IMU.Parameters imuParameters = new IMU.Parameters(new RevHubOrientationOnRobot(
@@ -57,21 +69,42 @@ public class Hardware {
         rightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Lifter Motors
-        lifterLeftMotor = hardwareMap.dcMotor.get("liftLeft");
-        lifterRightMotor = hardwareMap.dcMotor.get("liftRight");
+        verticalLiftLeftMotor = hardwareMap.dcMotor.get("verticalLiftLeft");
+        verticalLiftRightMotor = hardwareMap.dcMotor.get("verticalLiftRight");
 
-        lifterLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lifterRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        verticalLiftLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        verticalLiftRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        lifterLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lifterRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        verticalLiftLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        verticalLiftRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        lifterLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        verticalLiftLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        lifterSensorRight = hardwareMap.get(TouchSensor.class, "sensorRight");
-        lifterSensorLeft = hardwareMap.get(TouchSensor.class, "sensorLeft");
+        verticalLiftSensorRight = hardwareMap.get(TouchSensor.class, "verticalSensorRight");
+        verticalLiftSensorLeft = hardwareMap.get(TouchSensor.class, "verticalSensorLeft");
 
-        liftClaw = hardwareMap.get(Servo.class, "liftClaw");
+        verticalLiftClaw = hardwareMap.get(Servo.class, "verticalLiftClaw");
+
+
+        //Horizontal Lifter Motors
+
+        horizontalLiftLeftMotor = hardwareMap.dcMotor.get("horizontalLiftLeft");
+        horizontalLiftRightMotor = hardwareMap.dcMotor.get("horizontalLiftRight");
+
+        horizontalLiftLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        horizontalLiftRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        horizontalLiftLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        horizontalLiftRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        horizontalLiftLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        horizontalLiftSensorLeft = hardwareMap.get(TouchSensor.class, "horizontalSensorLeft");
+        horizontalLiftSensorRight = hardwareMap.get(TouchSensor.class, "horizontalSensorRight");
+
+        horizontalLiftClaw = hardwareMap.get(Servo.class, "horizontalLiftClaw");
+
+        horizontalSwivel = hardwareMap.get(Servo.class, "swivel");
 
     }
 }

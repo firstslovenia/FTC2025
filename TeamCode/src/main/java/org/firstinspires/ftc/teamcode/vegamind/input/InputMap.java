@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.vegamind.input;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import lombok.Getter;
-
 public abstract class InputMap {
     final protected Gamepad gamepad1;
     final protected Gamepad gamepad2;
@@ -18,7 +16,7 @@ public abstract class InputMap {
     abstract public double readDriveRot();
     abstract public boolean readImuReset();
 
-    abstract public double readLifterY();
+    abstract public double readVerticalLifterY();
 
-    abstract public boolean readClaw();
+    abstract public boolean readVerticalLifterClaw();
 }

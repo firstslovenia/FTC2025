@@ -2,5 +2,7 @@
   pkgs.mkShell {
     nativeBuildInputs = with pkgs.buildPackages; [ 
     android-studio
-    android-tools ];
+    android-tools
+    jetbrains-toolbox
+    ];
 }

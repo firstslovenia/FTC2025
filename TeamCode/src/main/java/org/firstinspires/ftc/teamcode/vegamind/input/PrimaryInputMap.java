@@ -31,12 +31,12 @@ public class PrimaryInputMap extends InputMap {
     }
 
     @Override
-    public double readLifterY() {
+    public double readVerticalLifterY() {
         return gamepad2.right_stick_y;
     }
 
     @Override
-    public boolean readClaw() {
+    public boolean readVerticalLifterClaw() {
         return gamepad2.right_stick_button;
     }
 }

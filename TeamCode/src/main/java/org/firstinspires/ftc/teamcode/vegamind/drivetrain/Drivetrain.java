@@ -24,5 +24,5 @@ public abstract class Drivetrain extends SampleMecanumDrive {
         rightFrontMotor = Hardware.getRightFrontMotor();
     }
 
-    public abstract void run(double inputX, double inputY, double inputRot);
+    public abstract void run();
 }

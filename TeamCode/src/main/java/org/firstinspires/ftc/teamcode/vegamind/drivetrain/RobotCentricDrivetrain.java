@@ -3,15 +3,17 @@ package org.firstinspires.ftc.teamcode.vegamind.drivetrain;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.teamcode.vegamind.input.InputMapper;
+
 public class RobotCentricDrivetrain extends Drivetrain {
     public RobotCentricDrivetrain(HardwareMap hardwareMap, IMU imu) {
         super(hardwareMap, imu);
     }
 
-    public void run(double inputX, double inputY, double inputRot) {
-        double y = inputY;
-        double x = -inputX * 1.1;
-        double rx = inputRot;
+    public void run() {
+        double y = InputMapper.getDriveY();
+        double x = -InputMapper.getDriveX() * 1.1;
+        double rx = InputMapper.getDriveRot();
 
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
         double frontLeftPower = (y + x + rx) / denominator;

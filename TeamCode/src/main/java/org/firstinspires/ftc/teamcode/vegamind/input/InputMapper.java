@@ -18,6 +18,15 @@ public class InputMapper {
     private static double verticalLifterY;
     @Getter
     private static boolean verticalLifterClaw;
+    @Getter
+    private static double horizontalLifterX;
+    @Getter
+    static boolean horizontalSwivelPrime;
+    @Getter
+    static boolean horizontalLifterClaw;
+    @Getter
+    static boolean transferSequenceInit;
+
 
     public static void init(InputMap inputMapToSet) {
         inputMap = inputMapToSet;
@@ -31,9 +40,30 @@ public class InputMapper {
 
         verticalLifterY = inputMap.readVerticalLifterY();
         verticalLifterClaw = inputMap.readVerticalLifterClaw();
+
+        horizontalLifterX = inputMap.readHorizontalLifterX();
+        horizontalSwivelPrime = inputMap.readHorizontalSwivelPrime();
+        horizontalLifterClaw = inputMap.readHorizontalLifterClaw();
+        transferSequenceInit = inputMap.readTransferSequenceInit();
     }
 
     public static boolean getVerticalLifterClaw() { //LOMBOK NE DELA *shrug*
         return verticalLifterClaw;
+    }
+
+    public static double getHorizontalLifterX() {
+        return horizontalLifterX;
+    }
+
+    public static boolean getHorizontalSwivelPrime() {
+        return horizontalSwivelPrime;
+    }
+
+    public static boolean getHorizontalLifterClaw() {
+        return horizontalLifterClaw;
+    }
+
+    public static boolean getTransferSequenceInit() {
+        return transferSequenceInit;
     }
 }

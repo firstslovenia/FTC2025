@@ -19,4 +19,9 @@ public abstract class InputMap {
     abstract public double readVerticalLifterY();
 
     abstract public boolean readVerticalLifterClaw();
+
+    abstract public double readHorizontalLifterX();
+    abstract public boolean readHorizontalLifterClaw();
+    abstract public boolean readHorizontalSwivelPrime();
+    abstract public boolean readTransferSequenceInit();
 }

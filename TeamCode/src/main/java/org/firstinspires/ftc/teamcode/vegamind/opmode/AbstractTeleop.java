@@ -4,7 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.vegamind.Hardware;
+import org.firstinspires.ftc.teamcode.vegamind.Lifter.HorizontalLifter;
 import org.firstinspires.ftc.teamcode.vegamind.Lifter.Lifter;
+import org.firstinspires.ftc.teamcode.vegamind.Lifter.VerticalLifter;
 import org.firstinspires.ftc.teamcode.vegamind.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.vegamind.input.InputMapper;
 
@@ -13,7 +15,8 @@ public abstract class AbstractTeleop extends OpMode {
 
     // === MECHANISMS ==============================================================================
     protected Drivetrain drivetrain;
-    protected Lifter lifter;
+    protected VerticalLifter verticalLifter;
+    protected HorizontalLifter horizontalLifter;
 
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit START
@@ -41,7 +44,8 @@ public abstract class AbstractTeleop extends OpMode {
 
         // Run Mechanisms
         drivetrain.run();
-        lifter.run();
+        verticalLifter.run();
+        horizontalLifter.run();
 
         // Telemetry
         updateTelemetry();

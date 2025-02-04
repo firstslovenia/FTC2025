@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.vegamind.BetterTelemetry;
 import org.firstinspires.ftc.teamcode.vegamind.Hardware;
+import org.firstinspires.ftc.teamcode.vegamind.Lifter.HorizontalLifter;
 import org.firstinspires.ftc.teamcode.vegamind.Lifter.VerticalLifter;
 import org.firstinspires.ftc.teamcode.vegamind.drivetrain.FieldCentricDrivetrain;
 import org.firstinspires.ftc.teamcode.vegamind.input.InputMapper;
@@ -21,7 +22,8 @@ public class PrimaryTeleop extends AbstractTeleop {
 
         // Mechanisms
         drivetrain = new FieldCentricDrivetrain(hardwareMap, Hardware.getImu());
-        lifter = new VerticalLifter();
+        verticalLifter = new VerticalLifter();
+        horizontalLifter = new HorizontalLifter();
     }
 
     public void updateTelemetry() {

@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.vegamind.BetterTelemetry;
 import org.firstinspires.ftc.teamcode.vegamind.Claw;
 import org.firstinspires.ftc.teamcode.vegamind.Hardware;
 import org.firstinspires.ftc.teamcode.vegamind.input.InputMapper;
@@ -40,50 +41,62 @@ public class VerticalLifter extends Lifter {
 
     @Override
     public void run() {
-        if (transferState == TransferState.HORIZONTAL_LIFTER_CLAW_TO_240) {
-            transfer_sequence = true;
-            homingSequenceActive = true;
+        BetterTelemetry.print("transfer_state", transferState.name());
 
-            swivel.setPosition(0);
+        switch (transferState) {
+            case NONE:
+                run_motors(InputMapper.getVerticalLifterY());
+                claw.run(InputMapper.getVerticalLifterClaw());
 
-            claw.run(true);
+                break;
 
-            return;
-        } else if (transferState == TransferState.TRANSFER_TO_VERTICAL_LIFTER_CLAW) {
-            claw.run(true);
+            case HORIZONTAL_LIFTER_CLAW_TO_240:
+                transfer_sequence = true;
+                homingSequenceActive = true;
 
-            transferState = TransferState.RAISE_VERTICAL_LIFTER;
+                swivel.setPosition(0);
 
-            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftLeft.setTargetPosition((int)MAX_HEIGHT);
-            liftRight.setTargetPosition((int)MAX_HEIGHT);
-
-        } else if (transferState == TransferState.RAISE_VERTICAL_LIFTER) {
-            if (liftRight.getCurrentPosition() >= (int)MAX_HEIGHT - 100
-            ||  liftLeft.getCurrentPosition() >= (int)MAX_HEIGHT - 100) {
-
-                liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-                transferState = TransferState.SWING_VERTICAL_LIFTER_ARM;
-            }
-        } else if (transferState == TransferState.SWING_VERTICAL_LIFTER_ARM) {
-            swivel.setPosition(1);
-            swingTimer = new ElapsedTime();
-            transferState = TransferState.RELEASE_VERTICAL_LIFTER_CLAW;
-
-        } else if (transferState == TransferState.RELEASE_VERTICAL_LIFTER_CLAW) {
-            if(swingTimer.milliseconds() > 1000) {
                 claw.run(true);
-            }
-        }
 
-        if(transferState != TransferState.NONE) {
-            return;
-        }
+                break;
 
-        run_motors(InputMapper.getVerticalLifterY());
-        claw.run(InputMapper.getVerticalLifterClaw());
+            case TRANSFER_TO_VERTICAL_LIFTER_CLAW:
+                claw.run(true);
+
+                transferState = TransferState.RAISE_VERTICAL_LIFTER;
+
+                liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                liftLeft.setTargetPosition((int)MAX_HEIGHT);
+                liftRight.setTargetPosition((int)MAX_HEIGHT);
+
+                break;
+
+            case RAISE_VERTICAL_LIFTER:
+                if (liftRight.getCurrentPosition() >= (int)MAX_HEIGHT - 100
+                        ||  liftLeft.getCurrentPosition() >= (int)MAX_HEIGHT - 100) {
+
+                    liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+                    transferState = TransferState.SWING_VERTICAL_LIFTER_ARM;
+                }
+
+                break;
+
+            case SWING_VERTICAL_LIFTER_ARM:
+                swivel.setPosition(1);
+                swingTimer = new ElapsedTime();
+                transferState = TransferState.RELEASE_VERTICAL_LIFTER_CLAW;
+
+                break;
+
+            case RELEASE_VERTICAL_LIFTER_CLAW:
+                if(swingTimer.milliseconds() > 1000) {
+                    claw.run(true);
+                }
+
+                break;
+        }
     }
 }

@@ -27,6 +27,5 @@ public class PrimaryTeleop extends AbstractTeleop {
     }
 
     public void updateTelemetry() {
-
     }
 }

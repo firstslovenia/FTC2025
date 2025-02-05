@@ -2,10 +2,7 @@ package org.firstinspires.ftc.teamcode.vegamind.Lifter;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.vegamind.BetterTelemetry;
 import org.firstinspires.ftc.teamcode.vegamind.Claw;
 import org.firstinspires.ftc.teamcode.vegamind.Hardware;
 import org.firstinspires.ftc.teamcode.vegamind.input.InputMapper;
@@ -71,8 +68,7 @@ public class HorizontalLifter extends Lifter{
         swivelServoRight.setPosition(degToServoPos(30));
     }
 
-    @Override
-    public void run() {
+    private void handle_transfer() {
         if (InputMapper.getTransferSequenceInit()) {
             transferState = TransferState.HORIZONTAL_LIFTER_CLAW_TO_240;
         }
@@ -82,46 +78,36 @@ public class HorizontalLifter extends Lifter{
             transferState = TransferState.HORIZONTAL_LIFTER_CLAW_TO_270;
         }
 
-      /*  if (sensorLeft.getValue() != 0 || sensorRight.getValue() != 0) {
-            swivelServoRight.setPosition(degToServoPos(270));
-            swivelServoLeft.setPosition(degToServoPos(270));
-
-            clawToClawTransferTimer = new ElapsedTime();
-
-            servoToTransferTimer = null;
-            transfer_sequence = false;
-
-        }
-
-        if(clawToClawTransferTimer == null) {
-            claw.run(InputMapper.getHorizontalLifterClaw());
-        } else if (clawToClawTransferTimer.milliseconds() > 500) {
-            clawToClawTransferTimer = null;
-            claw.run(true);
-
+        if (transferState.ordinal() >= TransferState.RETRACT_HORIZONTAL_LIFT.ordinal()
+                &&  sensorRight.getValue() == 0) {
             liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            liftLeft.setTargetPosition(500);
-            liftRight.setTargetPosition(500);
-        }*/
-
-        run_swivel();
-
-        if (InputMapper.getHorizontalLifterX() != 0 || servoToTransferTimer == null) {
-            run_motors(InputMapper.getHorizontalLifterX());
-            return;
-        }
-
-        if (transferState.ordinal() >= TransferState.RETRACT_HORIZONTAL_LIFT.ordinal()
-        &&  sensorRight.getValue() == 0) {
-            liftRight.setPower(-1);
-            liftLeft.setPower(-1);
+            liftLeft.setTargetPosition(0);
+            liftRight.setTargetPosition(0);
         }
 
         if (transferState == TransferState.HORIZONTAL_LIFTER_CLAW_TO_270 && sensorRight.getValue() != 0){
             transferState = TransferState.TRANSFER_TO_VERTICAL_LIFTER_CLAW;
+
+            liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
             claw.run(true);
         }
+    }
+
+    @Override
+    public void run() {
+        if (InputMapper.getHorizontalLifterX() != 0 && transferState == TransferState.NONE) {
+            run_motors(InputMapper.getHorizontalLifterX());
+        }
+
+        handle_transfer();
+        run_swivel();
     }
 }

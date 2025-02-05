@@ -51,7 +51,6 @@ public class Hardware {
     private static Servo horizontalSwivelLeft;
     @Getter
     private static Servo horizontalSwivelRight;
-    @Getter
 
 
     @Getter

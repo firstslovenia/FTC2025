@@ -26,6 +26,8 @@ public abstract class Lifter {
 
     protected Claw claw;
 
+     static TransferState transferState = TransferState.NONE;
+
     protected Lifter() {
         accelerationTimer = new ElapsedTime();
     }
@@ -60,8 +62,8 @@ public abstract class Lifter {
             return;
         }
 
-        liftLeft.setPower(-0.4);
-        liftRight.setPower(-0.4);
+        liftLeft.setPower(-1);
+        liftRight.setPower(-1);
     }
 
 

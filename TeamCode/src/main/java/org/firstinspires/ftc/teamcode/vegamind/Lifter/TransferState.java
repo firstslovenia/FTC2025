@@ -1,0 +1,12 @@
+package org.firstinspires.ftc.teamcode.vegamind.Lifter;
+
+public enum TransferState {
+    NONE,
+    HORIZONTAL_LIFTER_CLAW_TO_240,
+    RETRACT_HORIZONTAL_LIFT,
+    HORIZONTAL_LIFTER_CLAW_TO_270,
+    TRANSFER_TO_VERTICAL_LIFTER_CLAW,
+    RAISE_VERTICAL_LIFTER,
+    SWING_VERTICAL_LIFTER_ARM,
+    RELEASE_VERTICAL_LIFTER_CLAW,
+}

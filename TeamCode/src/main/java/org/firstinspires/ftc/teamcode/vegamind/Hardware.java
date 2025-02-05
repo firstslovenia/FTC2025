@@ -36,6 +36,8 @@ public class Hardware {
     @Getter
     private static Servo verticalLiftClaw;
     @Getter
+    private static Servo verticalLifterSwivel;
+    @Getter
     private static DcMotor horizontalLiftLeftMotor;
     @Getter
     private static DcMotor horizontalLiftRightMotor;
@@ -49,6 +51,7 @@ public class Hardware {
     private static Servo horizontalSwivelLeft;
     @Getter
     private static Servo horizontalSwivelRight;
+    @Getter
 
 
     @Getter
@@ -87,6 +90,7 @@ public class Hardware {
 
         verticalLiftClaw = hardwareMap.get(Servo.class, "verticalLiftClaw");
 
+        verticalLifterSwivel = hardwareMap.get(Servo.class, "verticalLiftSwivel");
 
         //Horizontal Lifter Motors
 

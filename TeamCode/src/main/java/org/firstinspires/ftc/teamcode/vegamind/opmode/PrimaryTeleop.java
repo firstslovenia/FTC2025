@@ -23,7 +23,7 @@ public class PrimaryTeleop extends AbstractTeleop {
         // Mechanisms
         drivetrain = new FieldCentricDrivetrain(hardwareMap, Hardware.getImu());
         verticalLifter = new VerticalLifter();
-        horizontalLifter = new HorizontalLifter();
+        horizontalLifter = new HorizontalLifter(telemetry);
     }
 
     public void updateTelemetry() {

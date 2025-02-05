@@ -4,19 +4,22 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.vegamind.BetterTelemetry;
 import org.firstinspires.ftc.teamcode.vegamind.Claw;
 import org.firstinspires.ftc.teamcode.vegamind.Hardware;
 import org.firstinspires.ftc.teamcode.vegamind.input.InputMapper;
 
 public class HorizontalLifter extends Lifter{
 
-    Servo swivelServo;
+    Servo swivelServoRight;
+    Servo swivelServoLeft;
 
     ElapsedTime servoToTransferTimer;
 
     boolean transfer_sequence = false;
 
-    public HorizontalLifter() {
+    public HorizontalLifter(Telemetry telemetry) {
         super();
 
         this.liftRight = Hardware.getHorizontalLiftRightMotor();
@@ -32,12 +35,18 @@ public class HorizontalLifter extends Lifter{
 
         this.claw = new Claw(Hardware.getVerticalLiftClaw());
 
-        swivelServo = Hardware.getHorizontalSwivel();
-        swivelServo.setPosition(30);
+        swivelServoLeft = Hardware.getHorizontalSwivelLeft();
+        //swivelServoLeft.setPosition(30);
+
+        swivelServoRight = Hardware.getHorizontalSwivelRight();
+        swivelServoRight.setPosition(degToServoPos(30));
+
+        telemetry.addData("zt", degToServoPos(30));
+
     }
 
     private double degToServoPos(double deg) {
-        return (deg / 270) / 2; //270 because that's the full range of motion and divided by two to account for the gear ratio
+        return deg / 270.0f;
     }
 
     private void run_swivel() {
@@ -49,9 +58,11 @@ public class HorizontalLifter extends Lifter{
         }
 
         if (InputMapper.getHorizontalSwivelPrime()) {
-            swivelServo.setPosition(degToServoPos(0));
+            swivelServoLeft.setPosition(degToServoPos(0));
+            swivelServoRight.setPosition(degToServoPos(0));
         } else {
-            swivelServo.setPosition(degToServoPos(30));
+            swivelServoLeft.setPosition(degToServoPos(30));
+            swivelServoRight.setPosition(degToServoPos(30));
         }
     }
 
@@ -62,7 +73,9 @@ public class HorizontalLifter extends Lifter{
         }
 
         if (sensorLeft.getValue() != 0 || sensorRight.getValue() != 0) {
-            swivelServo.setPosition(degToServoPos(270));
+            swivelServoRight.setPosition(degToServoPos(270));
+            swivelServoLeft.setPosition(degToServoPos(270));
+
             servoToTransferTimer = null;
             transfer_sequence = false;
         }

@@ -46,7 +46,9 @@ public class Hardware {
     @Getter
     private static Servo horizontalLiftClaw;
     @Getter
-    private static Servo horizontalSwivel;
+    private static Servo horizontalSwivelLeft;
+    @Getter
+    private static Servo horizontalSwivelRight;
 
 
     @Getter
@@ -104,7 +106,10 @@ public class Hardware {
 
         horizontalLiftClaw = hardwareMap.get(Servo.class, "horizontalLiftClaw");
 
-        horizontalSwivel = hardwareMap.get(Servo.class, "swivel");
+        horizontalSwivelRight = hardwareMap.get(Servo.class, "swivelRight");
+        horizontalSwivelRight.setDirection(Servo.Direction.REVERSE);
+
+        horizontalSwivelLeft = hardwareMap.get(Servo.class, "swivelLeft");
 
     }
 }

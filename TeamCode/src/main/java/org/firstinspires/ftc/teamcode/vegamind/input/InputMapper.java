@@ -21,12 +21,11 @@ public class InputMapper {
     @Getter
     private static double horizontalLifterX;
     @Getter
-    static boolean horizontalSwivelPrime;
+    private static boolean horizontalSwivelPrime;
     @Getter
-    static boolean horizontalLifterClaw;
+    private static boolean horizontalLifterClaw;
     @Getter
-    static boolean transferSequenceInit;
-
+    private static boolean transferSequenceInit;
 
     public static void init(InputMap inputMapToSet) {
         inputMap = inputMapToSet;

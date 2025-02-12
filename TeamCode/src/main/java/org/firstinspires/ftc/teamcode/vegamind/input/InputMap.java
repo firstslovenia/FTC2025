@@ -24,4 +24,6 @@ public abstract class InputMap {
     abstract public boolean readHorizontalLifterClaw();
     abstract public boolean readHorizontalSwivelPrime();
     abstract public boolean readTransferSequenceInit();
+
+    abstract public double readClawSwivel();
 }

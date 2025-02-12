@@ -51,6 +51,8 @@ public class Hardware {
     private static Servo horizontalSwivelLeft;
     @Getter
     private static Servo horizontalSwivelRight;
+    @Getter
+    private static Servo horizontalClawSwivel;
 
 
     @Getter
@@ -83,6 +85,7 @@ public class Hardware {
         verticalLiftRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         verticalLiftLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        verticalLiftRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         verticalLiftSensorRight = hardwareMap.get(TouchSensor.class, "verticalSensorRight");
         verticalLiftSensorLeft = hardwareMap.get(TouchSensor.class, "verticalSensorLeft");
@@ -102,7 +105,7 @@ public class Hardware {
         horizontalLiftLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         horizontalLiftRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        horizontalLiftLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        horizontalLiftLeftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         horizontalLiftSensorLeft = hardwareMap.get(TouchSensor.class, "horizontalSensorLeft");
         horizontalLiftSensorRight = hardwareMap.get(TouchSensor.class, "horizontalSensorRight");
@@ -113,6 +116,8 @@ public class Hardware {
         horizontalSwivelRight.setDirection(Servo.Direction.REVERSE);
 
         horizontalSwivelLeft = hardwareMap.get(Servo.class, "swivelLeft");
+
+        horizontalClawSwivel = hardwareMap.get(Servo.class, "horizontalClawSwivel");
 
     }
 }

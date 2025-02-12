@@ -59,4 +59,9 @@ public class PrimaryInputMap extends InputMap {
     public boolean readTransferSequenceInit() {
         return gamepad2.b;
     }
+
+    @Override
+    public double readClawSwivel() {
+        return (gamepad2.dpad_right ? 1 : 0) - (gamepad2.dpad_left ? 1: 0);
+    }
 }

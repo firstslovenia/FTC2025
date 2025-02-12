@@ -26,6 +26,8 @@ public class InputMapper {
     private static boolean horizontalLifterClaw;
     @Getter
     private static boolean transferSequenceInit;
+    @Getter
+    private static double clawSwivel;
 
     public static void init(InputMap inputMapToSet) {
         inputMap = inputMapToSet;
@@ -44,6 +46,8 @@ public class InputMapper {
         horizontalSwivelPrime = inputMap.readHorizontalSwivelPrime();
         horizontalLifterClaw = inputMap.readHorizontalLifterClaw();
         transferSequenceInit = inputMap.readTransferSequenceInit();
+
+        clawSwivel = inputMap.readClawSwivel();
     }
 
     public static boolean getVerticalLifterClaw() { //LOMBOK NE DELA *shrug*

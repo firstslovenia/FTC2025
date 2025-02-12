@@ -47,10 +47,6 @@ public abstract class AbstractTeleop extends OpMode {
         drivetrain.run();
         verticalLifter.run();
         horizontalLifter.run();
-
-        // Telemetry
-        updateTelemetry();
-        BetterTelemetry.update();
     }
 
     /*

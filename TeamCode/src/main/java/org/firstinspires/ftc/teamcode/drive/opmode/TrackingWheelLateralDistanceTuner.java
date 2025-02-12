@@ -111,6 +111,7 @@ public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
             telemetry.addLine("Total Heading (deg): " + Math.toDegrees(headingAccumulator));
             telemetry.addLine("Raw Heading (deg): " + Math.toDegrees(heading));
             telemetry.addLine();
+            telemetry.addLine();
             telemetry.addLine("Press Y/△ to conclude routine");
             telemetry.update();
 

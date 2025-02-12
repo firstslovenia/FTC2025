@@ -15,6 +15,8 @@ public class VerticalLifter extends Lifter {
 
     boolean transfer_sequence = false;
 
+     ElapsedTime transferToLifterGrace;
+
     Servo swivel;
 
     ElapsedTime swingTimer;
@@ -36,13 +38,12 @@ public class VerticalLifter extends Lifter {
         swivel = Hardware.getVerticalLifterSwivel();
 
         claw = new Claw(Hardware.getVerticalLiftClaw());
+        claw.run(true);
 
     }
 
     @Override
     public void run() {
-        BetterTelemetry.print("transfer_state", transferState.name());
-
         switch (transferState) {
             case NONE:
                 run_motors(InputMapper.getVerticalLifterY());
@@ -61,27 +62,38 @@ public class VerticalLifter extends Lifter {
                 break;
 
             case TRANSFER_TO_VERTICAL_LIFTER_CLAW:
+
                 claw.run(true);
 
-                transferState = TransferState.RAISE_VERTICAL_LIFTER;
+                if (transferToLifterGrace == null) {
+                    transferToLifterGrace = new ElapsedTime();
+                    break;
+                }
 
-                liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                liftLeft.setTargetPosition((int)MAX_HEIGHT);
-                liftRight.setTargetPosition((int)MAX_HEIGHT);
+                if (transferToLifterGrace.milliseconds() > 500) {
+                    transferState = TransferState.RAISE_VERTICAL_LIFTER;
+                    transferToLifterGrace = null;
+                }
 
                 break;
 
             case RAISE_VERTICAL_LIFTER:
+                liftLeft.setTargetPosition((int)MAX_HEIGHT);
+                liftRight.setTargetPosition((int)MAX_HEIGHT);
+
+                liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                liftLeft.setPower(1.0f);
+                liftRight.setPower(1.0f);
+
                 if (liftRight.getCurrentPosition() >= (int)MAX_HEIGHT - 100
                         ||  liftLeft.getCurrentPosition() >= (int)MAX_HEIGHT - 100) {
 
-                    liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    reset_motors();
 
                     transferState = TransferState.SWING_VERTICAL_LIFTER_ARM;
                 }
-
                 break;
 
             case SWING_VERTICAL_LIFTER_ARM:

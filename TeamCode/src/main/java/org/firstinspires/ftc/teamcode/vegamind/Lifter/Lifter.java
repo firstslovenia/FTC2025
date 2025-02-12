@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.vegamind.BetterTelemetry;
 import org.firstinspires.ftc.teamcode.vegamind.Claw;
 import org.firstinspires.ftc.teamcode.vegamind.Vtils;
 
@@ -30,6 +31,8 @@ public abstract class Lifter {
 
     protected Lifter() {
         accelerationTimer = new ElapsedTime();
+        homingSequenceActive = true;
+        transferState = TransferState.NONE;
     }
 
     protected double calculatePower(double motor1, double motor2, double inputY) {
@@ -47,8 +50,12 @@ public abstract class Lifter {
     }
 
     protected void reset_motors() {
+        liftLeft.setPower(0.0f);
+
         liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        liftRight.setPower(0.0f);
 
         liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -62,8 +69,8 @@ public abstract class Lifter {
             return;
         }
 
-        liftLeft.setPower(-1);
-        liftRight.setPower(-1);
+        liftLeft.setPower(-0.3f);
+        liftRight.setPower(-0.3f);
     }
 
 
@@ -79,6 +86,9 @@ public abstract class Lifter {
         if ((sensorLeft.getValue() != -1 && !lastResetLeft) || (sensorRight.getValue() != 0 && !lastResetRight)) {
             reset_motors();
         }
+
+        BetterTelemetry.print("left", calculatePower(posLeft, posRight, inputY));
+        BetterTelemetry.print("right", calculatePower(posRight, posLeft, inputY));
 
         liftLeft.setPower(calculatePower(posLeft, posRight, inputY));
         liftRight.setPower(calculatePower(posRight, posLeft, inputY));

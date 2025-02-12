@@ -23,4 +23,8 @@ public class Claw {
 
         is_pressed_last = is_pressed;
     }
+
+    public void setOpen(boolean open) {
+        servo.setPosition(open ? 1.0 : 0.0);
+    }
 }

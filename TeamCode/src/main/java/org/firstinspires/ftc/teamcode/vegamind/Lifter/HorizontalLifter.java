@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.vegamind.Lifter;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.vegamind.BetterTelemetry;
 import org.firstinspires.ftc.teamcode.vegamind.Claw;
@@ -42,7 +43,7 @@ public class HorizontalLifter extends Lifter{
         swivelServoRight.setPosition(degToServoPos(140));
 
         clawSwivel = Hardware.getHorizontalClawSwivel();
-        clawSwivel.setPosition(0);
+        clawSwivel.setPosition(0.5);
 
     }
 
@@ -59,7 +60,7 @@ public class HorizontalLifter extends Lifter{
 
             return;
 
-        } else if (transferState == TransferState.HORIZONTAL_LIFTER_CLAW_TO_270) {
+        } else if (transferState == TransferState.HORIZONTAL_LIFTER_CLAW_TO_270) { // TODO maybe a delay?
             swivelServoLeft.setPosition(degToServoPos(270));
             swivelServoRight.setPosition(degToServoPos(270));
 
@@ -72,12 +73,16 @@ public class HorizontalLifter extends Lifter{
             return;
         }
 
-        swivelServoLeft.setPosition(degToServoPos(140));
-        swivelServoRight.setPosition(degToServoPos(140));
+        if(transferState != TransferState.NONE) {
+            return;
+        }
+
+        swivelServoLeft.setPosition(degToServoPos(30));
+        swivelServoRight.setPosition(degToServoPos(30));
     }
 
     private void run_claw_swivel() {
-        if (InputMapper.getClawSwivel() != 0 && !last_claw_swivel_change) {
+        if (InputMapper.getClawSwivel() != 0 && !last_claw_swivel_change) { //TODO I don't think this is working afaik
             clawSwivel.setPosition(
                     clawSwivel.getPosition() + (InputMapper.getClawSwivel() / 2)
             );

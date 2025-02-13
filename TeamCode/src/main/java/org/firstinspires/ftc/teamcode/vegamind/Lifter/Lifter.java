@@ -46,25 +46,28 @@ public abstract class Lifter {
 
         power *= Math.min(accelerationTimer.milliseconds() / 250, 1);
 
-        return power;
+        return power; //TODO reimplement; use power
     }
 
-    protected void reset_motors() {
-        liftLeft.setPower(0.0f);
+    protected void reset_motors(boolean setPoewrZero) {
+        if(setPoewrZero){
+            liftLeft.setPower(0.0f);
+            liftRight.setPower(0.0f);
+        }
 
         liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        liftRight.setPower(0.0f);
 
         liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     protected void homingSequence() {
+        // TODO Runout one side, conitnue moving the other side until sensor detects end position - make it paralel => then reset encoders
         if (sensorRight.getValue() != 0 || sensorLeft.getValue() != 0) {
             homingSequenceActive = false;
-            reset_motors();
+            reset_motors(true);
 
             return;
         }
@@ -83,18 +86,26 @@ public abstract class Lifter {
         double posLeft = liftLeft.getCurrentPosition();
         double posRight = liftRight.getCurrentPosition();
 
-        if ((sensorLeft.getValue() != -1 && !lastResetLeft) || (sensorRight.getValue() != 0 && !lastResetRight)) {
-            reset_motors();
+        //! JAKA JE ČARU IN JE DAL SENSOR RIGHT NA -1, BIL JE 0
+        // TODO Dodaj možnost za reset s pritisom na gumb na kontrolerju - lahko sta 2 gumba just in case
+        if ((sensorLeft.getValue() != 0) || (sensorRight.getValue() != 0)) { // TODO if this is intetnional ( why is one sensor set to not be -1 and the other 0) add a comment why
+            reset_motors(false);
         }
 
         BetterTelemetry.print("left", calculatePower(posLeft, posRight, inputY));
         BetterTelemetry.print("right", calculatePower(posRight, posLeft, inputY));
+        BetterTelemetry.print("encoderLeft", liftLeft.getCurrentPosition());
+        BetterTelemetry.print("encoderRight", liftRight.getCurrentPosition());
+        BetterTelemetry.print("encoderDifference", (liftLeft.getCurrentPosition() - liftRight.getCurrentPosition()));
+        BetterTelemetry.print("sensorLeft", sensorLeft.getValue());
+        BetterTelemetry.print("sensorRight", sensorRight.getValue());
 
         liftLeft.setPower(calculatePower(posLeft, posRight, inputY));
         liftRight.setPower(calculatePower(posRight, posLeft, inputY));
 
-        lastResetLeft = sensorLeft.getValue() != -1;
-        lastResetRight = sensorRight.getValue() != -1;
+        //! JAKA JE MESOU S TEM 0 JE BLA -1
+        // lastResetLeft = sensorLeft.getValue() != 0;
+        // lastResetRight = sensorRight.getValue() != 0;
     }
 
     public abstract void run();

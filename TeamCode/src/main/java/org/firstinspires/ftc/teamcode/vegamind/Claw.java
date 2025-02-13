@@ -25,6 +25,6 @@ public class Claw {
     }
 
     public void setOpen(boolean open) {
-        servo.setPosition(open ? 1.0 : 0.0);
+        servo.setPosition(!open ? 0.5 : 1);
     }
 }

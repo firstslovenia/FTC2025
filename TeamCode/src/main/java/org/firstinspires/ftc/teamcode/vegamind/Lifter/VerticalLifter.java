@@ -19,6 +19,8 @@ public class VerticalLifter extends Lifter {
 
     Servo swivel;
 
+    Claw specimenClaw;
+
     ElapsedTime swingTimer;
 
     public VerticalLifter() {
@@ -36,9 +38,13 @@ public class VerticalLifter extends Lifter {
         sensorRight = Hardware.getVerticalLiftSensorRight();
 
         swivel = Hardware.getVerticalLifterSwivel();
+        swivel.setPosition(1);
 
         claw = new Claw(Hardware.getVerticalLiftClaw());
-        claw.run(true);
+        claw.setOpen(false);
+
+        specimenClaw = new Claw(Hardware.getSpecimenClaw());
+        specimenClaw.setOpen(false);
 
     }
 
@@ -57,13 +63,13 @@ public class VerticalLifter extends Lifter {
 
                 swivel.setPosition(0);
 
-                claw.run(true);
+                claw.setOpen(false);
 
                 break;
 
             case TRANSFER_TO_VERTICAL_LIFTER_CLAW:
 
-                claw.run(true);
+                claw.setOpen(true);
 
                 if (transferToLifterGrace == null) {
                     transferToLifterGrace = new ElapsedTime();
@@ -78,6 +84,8 @@ public class VerticalLifter extends Lifter {
                 break;
 
             case RAISE_VERTICAL_LIFTER:
+                claw.setOpen(false);
+
                 liftLeft.setTargetPosition((int)MAX_HEIGHT);
                 liftRight.setTargetPosition((int)MAX_HEIGHT);
 
@@ -90,14 +98,14 @@ public class VerticalLifter extends Lifter {
                 if (liftRight.getCurrentPosition() >= (int)MAX_HEIGHT - 100
                         ||  liftLeft.getCurrentPosition() >= (int)MAX_HEIGHT - 100) {
 
-                    reset_motors();
+                    reset_motors(true);
 
                     transferState = TransferState.SWING_VERTICAL_LIFTER_ARM;
                 }
                 break;
 
             case SWING_VERTICAL_LIFTER_ARM:
-                swivel.setPosition(1);
+                swivel.setPosition(0);
                 swingTimer = new ElapsedTime();
                 transferState = TransferState.RELEASE_VERTICAL_LIFTER_CLAW;
 
@@ -105,7 +113,7 @@ public class VerticalLifter extends Lifter {
 
             case RELEASE_VERTICAL_LIFTER_CLAW:
                 if(swingTimer.milliseconds() > 1000) {
-                    claw.run(true);
+                    claw.setOpen(true);
                 }
 
                 break;

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.vegamind.Lifter;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.vegamind.BetterTelemetry;
 import org.firstinspires.ftc.teamcode.vegamind.Claw;
@@ -37,39 +36,44 @@ public class HorizontalLifter extends Lifter{
         claw = new Claw(Hardware.getVerticalLiftClaw());
 
         swivelServoLeft = Hardware.getHorizontalSwivelLeft();
-        swivelServoLeft.setPosition(degToServoPos(140));
+        swivelServoLeft.setPosition(degToServoPosSwivel(240));
 
         swivelServoRight = Hardware.getHorizontalSwivelRight();
-        swivelServoRight.setPosition(degToServoPos(140));
+        swivelServoRight.setPosition(degToServoPosSwivel(240));
 
         clawSwivel = Hardware.getHorizontalClawSwivel();
-        clawSwivel.setPosition(0.5);
+        clawSwivel.scaleRange(0.3333, 1);
+
+        clawSwivel.setPosition(degToServoPosClawSwivel(0));
 
     }
 
-    private double degToServoPos(double deg) {
-        return deg / 270.0f / 2.0f;
+    private double degToServoPosSwivel(double deg) {
+        return (deg+90) / 270.0f / 2.0f;
+    }
+    private double degToServoPosClawSwivel(double deg) {
+        return (deg) / 180;
     }
 
     private void run_swivel() {
         if (transferState == TransferState.HORIZONTAL_LIFTER_CLAW_TO_240) {
-            swivelServoLeft.setPosition(degToServoPos(240));
-            swivelServoRight.setPosition(degToServoPos(240));
+            swivelServoLeft.setPosition(degToServoPosSwivel(240));
+            swivelServoRight.setPosition(degToServoPosSwivel(240));
 
             transferState = TransferState.RETRACT_HORIZONTAL_LIFT;
 
             return;
 
         } else if (transferState == TransferState.HORIZONTAL_LIFTER_CLAW_TO_270) { // TODO maybe a delay?
-            swivelServoLeft.setPosition(degToServoPos(270));
-            swivelServoRight.setPosition(degToServoPos(270));
+            swivelServoLeft.setPosition(degToServoPosSwivel(270));
+            swivelServoRight.setPosition(degToServoPosSwivel(270));
 
             return;
         }
 
         if (InputMapper.getHorizontalSwivelPrime()) {
-            swivelServoLeft.setPosition(degToServoPos(0));
-            swivelServoRight.setPosition(degToServoPos(0));
+            swivelServoLeft.setPosition(degToServoPosSwivel(0));
+            swivelServoRight.setPosition(degToServoPosSwivel(0));
             return;
         }
 
@@ -77,8 +81,8 @@ public class HorizontalLifter extends Lifter{
             return;
         }
 
-        swivelServoLeft.setPosition(degToServoPos(30));
-        swivelServoRight.setPosition(degToServoPos(30));
+        //swivelServoLeft.setPosition(degToServoPosSwivel(240));
+        //swivelServoRight.setPosition(degToServoPosSwivel(240));
     }
 
     private void run_claw_swivel() {
@@ -103,11 +107,11 @@ public class HorizontalLifter extends Lifter{
             transferState = TransferState.HORIZONTAL_LIFTER_CLAW_TO_270;
 
         } else if (transferState == TransferState.RETRACT_HORIZONTAL_LIFT) {
-            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
             liftLeft.setTargetPosition(0);
             liftRight.setTargetPosition(0);
+
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             liftLeft.setPower(1.0f);
             liftRight.setPower(1.0f);
@@ -117,7 +121,7 @@ public class HorizontalLifter extends Lifter{
 
             transferState = TransferState.TRANSFER_TO_VERTICAL_LIFTER_CLAW;
 
-            reset_motors();
+            reset_motors(true);
 
 
             claw.run(true);

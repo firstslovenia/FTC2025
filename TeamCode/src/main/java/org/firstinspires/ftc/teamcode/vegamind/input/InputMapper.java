@@ -19,6 +19,8 @@ public class InputMapper {
     @Getter
     private static boolean verticalLifterClaw;
     @Getter
+    private static boolean specimenClaw;
+    @Getter
     private static double horizontalLifterX;
     @Getter
     private static boolean horizontalSwivelPrime;
@@ -41,6 +43,7 @@ public class InputMapper {
 
         verticalLifterY = inputMap.readVerticalLifterY();
         verticalLifterClaw = inputMap.readVerticalLifterClaw();
+        specimenClaw = inputMap.readSpecimenClaw();
 
         horizontalLifterX = inputMap.readHorizontalLifterX();
         horizontalSwivelPrime = inputMap.readHorizontalSwivelPrime();
@@ -68,5 +71,9 @@ public class InputMapper {
 
     public static boolean getTransferSequenceInit() {
         return transferSequenceInit;
+    }
+
+    public static boolean getSpecimenClaw() {
+        return specimenClaw;
     }
 }

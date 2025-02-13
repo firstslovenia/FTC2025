@@ -38,6 +38,8 @@ public class Hardware {
     @Getter
     private static Servo verticalLifterSwivel;
     @Getter
+    private static Servo specimenClaw;
+    @Getter
     private static DcMotor horizontalLiftLeftMotor;
     @Getter
     private static DcMotor horizontalLiftRightMotor;
@@ -84,7 +86,7 @@ public class Hardware {
         verticalLiftLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         verticalLiftRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        verticalLiftLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        verticalLiftLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         verticalLiftRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         verticalLiftSensorRight = hardwareMap.get(TouchSensor.class, "verticalSensorRight");
@@ -93,6 +95,8 @@ public class Hardware {
         verticalLiftClaw = hardwareMap.get(Servo.class, "verticalLiftClaw");
 
         verticalLifterSwivel = hardwareMap.get(Servo.class, "verticalLiftSwivel");
+
+        specimenClaw = hardwareMap.get(Servo.class, "specimenClaw");
 
         //Horizontal Lifter Motors
 
@@ -113,7 +117,7 @@ public class Hardware {
         horizontalLiftClaw = hardwareMap.get(Servo.class, "horizontalLiftClaw");
 
         horizontalSwivelRight = hardwareMap.get(Servo.class, "swivelRight");
-        horizontalSwivelRight.setDirection(Servo.Direction.REVERSE);
+        horizontalSwivelRight.setDirection(Servo.Direction.FORWARD);
 
         horizontalSwivelLeft = hardwareMap.get(Servo.class, "swivelLeft");
 

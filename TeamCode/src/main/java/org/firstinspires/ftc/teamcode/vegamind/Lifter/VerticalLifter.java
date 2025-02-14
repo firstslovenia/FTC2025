@@ -63,13 +63,13 @@ public class VerticalLifter extends Lifter {
 
                 swivel.setPosition(0);
 
-                claw.setOpen(false);
+                claw.setOpen(true);
 
                 break;
 
             case TRANSFER_TO_VERTICAL_LIFTER_CLAW:
 
-                claw.setOpen(true);
+                claw.setOpen(false);
 
                 if (transferToLifterGrace == null) {
                     transferToLifterGrace = new ElapsedTime();

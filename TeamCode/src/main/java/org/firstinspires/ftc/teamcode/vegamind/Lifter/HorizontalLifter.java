@@ -34,6 +34,7 @@ public class HorizontalLifter extends Lifter{
         this.sensorRight = Hardware.getHorizontalLiftSensorRight();
 
         claw = new Claw(Hardware.getVerticalLiftClaw());
+        claw.run(false);
 
         swivelServoLeft = Hardware.getHorizontalSwivelLeft();
         swivelServoLeft.setPosition(degToServoPosSwivel(240));
@@ -124,6 +125,10 @@ public class HorizontalLifter extends Lifter{
             reset_motors(true);
 
 
+
+        }
+
+        else if (transferState == TransferState.RAISE_VERTICAL_LIFTER) {
             claw.run(true);
         }
     }

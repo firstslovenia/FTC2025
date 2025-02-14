@@ -46,11 +46,11 @@ public abstract class Lifter {
 
         power *= Math.min(accelerationTimer.milliseconds() / 250, 1);
 
-        return power; //TODO reimplement; use power
+        return inputY; //TODO reimplement; use power
     }
 
-    protected void reset_motors(boolean setPoewrZero) {
-        if(setPoewrZero){
+    protected void reset_motors(boolean setPowerZero) {
+        if(setPowerZero){
             liftLeft.setPower(0.0f);
             liftRight.setPower(0.0f);
         }

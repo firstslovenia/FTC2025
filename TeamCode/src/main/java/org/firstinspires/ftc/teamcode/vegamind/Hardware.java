@@ -97,6 +97,8 @@ public class Hardware {
         verticalLifterSwivel = hardwareMap.get(Servo.class, "verticalLiftSwivel");
 
         specimenClaw = hardwareMap.get(Servo.class, "specimenClaw");
+        specimenClaw.setDirection(Servo.Direction.REVERSE); //because yes
+        //I put in the servo wrong hahahah
 
         //Horizontal Lifter Motors
 

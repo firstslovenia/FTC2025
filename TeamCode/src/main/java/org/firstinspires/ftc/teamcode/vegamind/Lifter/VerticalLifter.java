@@ -15,7 +15,7 @@ public class VerticalLifter extends Lifter {
 
     boolean transfer_sequence = false;
 
-     ElapsedTime transferToLifterGrace;
+     ElapsedTime closeClawTime;
 
     Servo swivel;
 
@@ -40,20 +40,22 @@ public class VerticalLifter extends Lifter {
         swivel = Hardware.getVerticalLifterSwivel();
         swivel.setPosition(1);
 
-        claw = new Claw(Hardware.getVerticalLiftClaw());
-        claw.setOpen(false);
+        claw = new Claw(Hardware.getVerticalLiftClaw(), false);
+        claw.setPos(1);
 
-        specimenClaw = new Claw(Hardware.getSpecimenClaw());
+        specimenClaw = new Claw(Hardware.getSpecimenClaw(), false);
         specimenClaw.setOpen(false);
 
     }
 
     @Override
     public void run() {
+        BetterTelemetry.print("home", homingSequenceActive);
+        BetterTelemetry.print("liftservo", Hardware.getVerticalLiftClaw().getPosition());
+        run_motors(InputMapper.getVerticalLifterY());
         switch (transferState) {
             case NONE:
-                run_motors(InputMapper.getVerticalLifterY());
-                claw.run(InputMapper.getVerticalLifterClaw());
+                //claw.run(!InputMapper.getVerticalLifterClaw());
 
                 break;
 
@@ -61,36 +63,36 @@ public class VerticalLifter extends Lifter {
                 transfer_sequence = true;
                 homingSequenceActive = true;
 
-                swivel.setPosition(0);
+                swivel.setPosition(1);
 
-                claw.setOpen(true);
+                claw.setPos(1);
 
                 break;
 
             case TRANSFER_TO_VERTICAL_LIFTER_CLAW:
-
-                claw.setOpen(false);
-
-                if (transferToLifterGrace == null) {
-                    transferToLifterGrace = new ElapsedTime();
+                if (homingSequenceActive) {
                     break;
                 }
 
-                if (transferToLifterGrace.milliseconds() > 500) {
-                    transferState = TransferState.RAISE_VERTICAL_LIFTER;
-                    transferToLifterGrace = null;
+                claw.setPos(0);
+
+                transferState = TransferState.RAM_HORIZONTAL_LIFT;
+
+                break;
+
+            case EXTEND_HORIZONTAL_LIFTER:
+                if(closeClawTime == null) {
+                    closeClawTime = new ElapsedTime();
                 }
+                claw.setPos(1);
 
                 break;
 
             case RAISE_VERTICAL_LIFTER:
-                claw.setOpen(false);
 
-                liftLeft.setTargetPosition((int)MAX_HEIGHT);
-                liftRight.setTargetPosition((int)MAX_HEIGHT);
-
-                liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                if (closeClawTime.milliseconds() < 1000) {
+                    break;
+                }
 
                 liftLeft.setPower(1.0f);
                 liftRight.setPower(1.0f);
@@ -98,9 +100,11 @@ public class VerticalLifter extends Lifter {
                 if (liftRight.getCurrentPosition() >= (int)MAX_HEIGHT - 100
                         ||  liftLeft.getCurrentPosition() >= (int)MAX_HEIGHT - 100) {
 
-                    reset_motors(true);
+                    liftRight.setPower(0);
+                    liftLeft.setPower(0);
 
                     transferState = TransferState.SWING_VERTICAL_LIFTER_ARM;
+                    closeClawTime = null;
                 }
                 break;
 
@@ -113,7 +117,7 @@ public class VerticalLifter extends Lifter {
 
             case RELEASE_VERTICAL_LIFTER_CLAW:
                 if(swingTimer.milliseconds() > 1000) {
-                    claw.setOpen(true);
+                    claw.setPos(0);
                 }
 
                 break;

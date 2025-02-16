@@ -41,11 +41,11 @@ public class InputMapper {
         driveRot = inputMap.readDriveRot();
         imuReset = inputMap.readImuReset();
 
-        verticalLifterY = inputMap.readVerticalLifterY();
+        verticalLifterY = inputMap.readVerticalLifter();
         verticalLifterClaw = inputMap.readVerticalLifterClaw();
         specimenClaw = inputMap.readSpecimenClaw();
 
-        horizontalLifterX = inputMap.readHorizontalLifterX();
+        horizontalLifterX = inputMap.readHorizontalLifter();
         horizontalSwivelPrime = inputMap.readHorizontalSwivelPrime();
         horizontalLifterClaw = inputMap.readHorizontalLifterClaw();
         transferSequenceInit = inputMap.readTransferSequenceInit();

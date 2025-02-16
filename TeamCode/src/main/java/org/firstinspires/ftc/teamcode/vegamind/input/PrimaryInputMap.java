@@ -31,18 +31,18 @@ public class PrimaryInputMap extends InputMap {
     }
 
     @Override
-    public double readVerticalLifterY() {
+    public double readVerticalLifter() {
         return gamepad2.right_stick_y;
     }
 
     @Override
     public boolean readVerticalLifterClaw() {
-        return gamepad2.right_stick_button;
+        return gamepad2.left_bumper;
     }
 
     @Override
-    public double readHorizontalLifterX() {
-        return gamepad2.left_stick_x;
+    public double readHorizontalLifter() {
+        return gamepad2.left_stick_y;
     }
 
     @Override
@@ -52,12 +52,12 @@ public class PrimaryInputMap extends InputMap {
 
     @Override
     public boolean readHorizontalSwivelPrime() {
-        return gamepad2.x;
+        return gamepad2.circle;
     }
 
     @Override
     public boolean readTransferSequenceInit() {
-        return gamepad2.b;
+        return gamepad2.x;
     }
 
     @Override

@@ -16,12 +16,12 @@ public abstract class InputMap {
     abstract public double readDriveRot();
     abstract public boolean readImuReset();
 
-    abstract public double readVerticalLifterY();
+    abstract public double readVerticalLifter();
 
     abstract public boolean readVerticalLifterClaw();
     abstract  public boolean readSpecimenClaw();
 
-    abstract public double readHorizontalLifterX();
+    abstract public double readHorizontalLifter();
     abstract public boolean readHorizontalLifterClaw();
     abstract public boolean readHorizontalSwivelPrime();
     abstract public boolean readTransferSequenceInit();

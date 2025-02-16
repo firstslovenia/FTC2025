@@ -1,13 +1,9 @@
 package org.firstinspires.ftc.teamcode.vegamind.Lifter;
 
-import android.renderscript.ScriptGroup;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.vegamind.BetterTelemetry;
-import org.firstinspires.ftc.teamcode.vegamind.Claw;
 import org.firstinspires.ftc.teamcode.vegamind.Hardware;
 import org.firstinspires.ftc.teamcode.vegamind.input.InputMapper;
 
@@ -15,13 +11,15 @@ public class VerticalLifter extends Lifter {
 
     boolean transfer_sequence = false;
 
-     ElapsedTime closeClawTime;
+    ElapsedTime closeClawTime;
+    ElapsedTime swingTimer;
+    ElapsedTime clawReleaseTime;
 
     Servo swivel;
 
-    Claw specimenClaw;
+    Servo specimenClaw;
+    Servo claw;
 
-    ElapsedTime swingTimer;
 
     public VerticalLifter() {
         super();
@@ -40,32 +38,29 @@ public class VerticalLifter extends Lifter {
         swivel = Hardware.getVerticalLifterSwivel();
         swivel.setPosition(1);
 
-        claw = new Claw(Hardware.getVerticalLiftClaw(), false);
-        claw.setPos(1);
+        claw = Hardware.getVerticalLiftClaw();
+        claw.setPosition(1);
 
-        specimenClaw = new Claw(Hardware.getSpecimenClaw(), false);
-        specimenClaw.setOpen(false);
+        specimenClaw = Hardware.getSpecimenClaw();
 
     }
 
     @Override
     public void run() {
-        BetterTelemetry.print("home", homingSequenceActive);
-        BetterTelemetry.print("liftservo", Hardware.getVerticalLiftClaw().getPosition());
         run_motors(InputMapper.getVerticalLifterY());
         switch (transferState) {
             case NONE:
-                //claw.run(!InputMapper.getVerticalLifterClaw());
+                claw.setPosition(InputMapper.getVerticalLifterClaw() ? 0 : 1); // idk if this is right lol
 
                 break;
 
-            case HORIZONTAL_LIFTER_CLAW_TO_240:
+            case PRIME_LIFT_CLAW:
                 transfer_sequence = true;
                 homingSequenceActive = true;
 
                 swivel.setPosition(1);
 
-                claw.setPos(1);
+                claw.setPosition(1);
 
                 break;
 
@@ -74,7 +69,7 @@ public class VerticalLifter extends Lifter {
                     break;
                 }
 
-                claw.setPos(0);
+                claw.setPosition(0);
 
                 transferState = TransferState.RAM_HORIZONTAL_LIFT;
 
@@ -84,7 +79,7 @@ public class VerticalLifter extends Lifter {
                 if(closeClawTime == null) {
                     closeClawTime = new ElapsedTime();
                 }
-                claw.setPos(1);
+                claw.setPosition(1);
 
                 break;
 
@@ -116,11 +111,31 @@ public class VerticalLifter extends Lifter {
                 break;
 
             case RELEASE_VERTICAL_LIFTER_CLAW:
-                if(swingTimer.milliseconds() > 1000) {
-                    claw.setPos(0);
+                if(swingTimer.milliseconds() < 1000) {
+                    break;
                 }
 
+                claw.setPosition(0);
+                transferState = TransferState.RESET;
+
                 break;
+
+            case RESET:
+                if (clawReleaseTime == null) {
+                    clawReleaseTime = new ElapsedTime();
+                }
+
+                if(clawReleaseTime.milliseconds() < 1000) {
+                    homingSequenceActive = true;
+                    break;
+                }
+
+                swivel.setPosition(1);
+
+                if (!homingSequenceActive) {
+                    transferState = TransferState.NONE;
+                    break;
+                }
         }
     }
 }

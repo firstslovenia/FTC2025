@@ -1,21 +1,37 @@
 package org.firstinspires.ftc.teamcode.vegamind.Lifter;
 
+import androidx.core.app.NotificationCompat;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.vegamind.Lifter.Sequence.Sequence;
 import org.firstinspires.ftc.teamcode.vegamind.Vtils;
+import org.firstinspires.ftc.teamcode.vegamind.input.InputMap;
+
+import lombok.Getter;
+import lombok.Setter;
 
 
 public abstract class Lifter {
+
+    @Getter
     protected DcMotor liftLeft;
+
+    @Getter
     protected DcMotor liftRight;
 
+    @Getter
     protected TouchSensor sensorLeft;
+
+    @Getter
     protected TouchSensor sensorRight;
 
     protected double MAX_HEIGHT = 3500;
 
+    @Setter
+    @Getter
     protected boolean homingSequenceActive = true;
 
     protected ElapsedTime accelerationTimer;
@@ -42,7 +58,7 @@ public abstract class Lifter {
         return inputY; //TODO reimplement; use power
     }
 
-    protected void reset_motors(boolean setPowerZero) {
+    public void reset_motors(boolean setPowerZero) {
         if(setPowerZero){
             liftLeft.setPower(0.0f);
             liftRight.setPower(0.0f);
@@ -56,7 +72,11 @@ public abstract class Lifter {
         liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    protected void homingSequence() {
+    public void homingSequence() {
+        if (!homingSequenceActive) {
+            return;
+        }
+
         if (sensorRight.getValue() != 0 || sensorLeft.getValue() != 0) {
             homingSequenceActive = false;
             reset_motors(true);
@@ -86,5 +106,5 @@ public abstract class Lifter {
         liftRight.setPower(calculatePower(posRight, posLeft, inputY));
     }
 
-    public abstract void run();
+    public abstract void run(InputMap map, Sequence sequence);
 }

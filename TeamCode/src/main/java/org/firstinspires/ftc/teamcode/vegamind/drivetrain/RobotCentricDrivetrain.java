@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.vegamind.drivetrain;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.teamcode.vegamind.input.InputMapper;
-
 public class RobotCentricDrivetrain extends Drivetrain {
     public RobotCentricDrivetrain(HardwareMap hardwareMap, IMU imu) {
         super(hardwareMap, imu);

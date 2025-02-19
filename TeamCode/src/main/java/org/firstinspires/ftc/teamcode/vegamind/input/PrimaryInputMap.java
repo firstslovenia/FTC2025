@@ -1,72 +1,40 @@
 package org.firstinspires.ftc.teamcode.vegamind.input;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
-
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-public class PrimaryInputMap extends InputMap {
-    public PrimaryInputMap(Gamepad gamepad1, Gamepad gamepad2) {
-        super(gamepad1, gamepad2);
+public class PrimaryInputMap extends InputMap{
+    public PrimaryInputMap(Gamepad gamepad) {
+        super(InputMapType.PRIMARY, gamepad);
     }
 
     @Override
-    public double readDriveX() {
-        return gamepad1.left_stick_x;
+    public boolean getOverride() {
+        return gamepad.left_trigger == 1 && gamepad.right_trigger == 1;
     }
 
     @Override
-    public double readDriveY() {
-        return gamepad1.left_stick_y;
+    public double getDriveX() {
+        return gamepad.left_stick_x;
     }
 
     @Override
-    public double readDriveRot() {
-        return gamepad1.right_stick_x;
+    public double getDriveY() {
+        return gamepad.left_stick_y;
     }
 
-    @Override
-    public boolean readImuReset() {
-        return gamepad1.options;
+    public boolean getPrimeBasket() {
+        return gamepad.triangle;
     }
 
-    @Override
-    public double readVerticalLifter() {
-        return gamepad2.right_stick_y;
+    public boolean getBasketClawRelease() {
+        return gamepad.x;
     }
 
-    @Override
-    public boolean readVerticalLifterClaw() {
-        return gamepad2.left_bumper;
+    public double getRotation() {
+       return gamepad.right_stick_x;
     }
 
-    @Override
-    public double readHorizontalLifter() {
-        return gamepad2.left_stick_y;
-    }
-
-    @Override
-    public boolean readHorizontalLifterClaw() {
-        return gamepad2.left_stick_button;
-    }
-
-    @Override
-    public boolean readHorizontalSwivelPrime() {
-        return gamepad2.circle;
-    }
-
-    @Override
-    public boolean readTransferSequenceInit() {
-        return gamepad2.x;
-    }
-
-    @Override
-    public double readClawSwivel() {
-        return (gamepad2.dpad_right ? 1 : 0) - (gamepad2.dpad_left ? 1: 0);
-    }
-
-    @Override
-    public boolean readSpecimenClaw() {
-        return gamepad2.x;
+    public boolean getVibrate() {
+        return gamepad.square;
     }
 }

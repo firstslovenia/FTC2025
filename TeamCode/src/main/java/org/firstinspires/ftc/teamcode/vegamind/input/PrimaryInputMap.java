@@ -19,7 +19,7 @@ public class PrimaryInputMap extends InputMap{
 
     @Override
     public double getDriveY() {
-        return gamepad.left_stick_y;
+        return -gamepad.left_stick_y;
     }
 
     public boolean getPrimeBasket() {

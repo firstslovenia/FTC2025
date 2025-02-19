@@ -74,7 +74,6 @@ public class Hardware {
         rightFrontMotor = hardwareMap.dcMotor.get("rightFront");
 
         rightRearMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Lifter Motors
         verticalLiftLeftMotor = hardwareMap.dcMotor.get("verticalLiftLeft");
@@ -97,7 +96,6 @@ public class Hardware {
         verticalLifterSwivel = hardwareMap.get(Servo.class, "verticalLiftSwivel");
 
         specimenClaw = hardwareMap.get(Servo.class, "specimenClaw");
-        specimenClaw.setDirection(Servo.Direction.REVERSE); //because yes
         //I put in the servo wrong hahahah
 
         //Horizontal Lifter Motors
@@ -119,9 +117,9 @@ public class Hardware {
         horizontalLiftClaw = hardwareMap.get(Servo.class, "horizontalLiftClaw");
 
         horizontalSwivelRight = hardwareMap.get(Servo.class, "swivelRight");
-        horizontalSwivelRight.setDirection(Servo.Direction.FORWARD);
 
         horizontalSwivelLeft = hardwareMap.get(Servo.class, "swivelLeft");
+        horizontalSwivelLeft.setDirection(Servo.Direction.REVERSE);
 
         horizontalClawSwivel = hardwareMap.get(Servo.class, "horizontalClawSwivel");
 

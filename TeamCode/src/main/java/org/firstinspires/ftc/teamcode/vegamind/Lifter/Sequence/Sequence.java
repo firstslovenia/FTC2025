@@ -4,12 +4,14 @@ import java.util.List;
 
 import lombok.Getter;
 
-public class Sequence {
+public abstract class Sequence {
     protected List<Step> steps;
-    protected int currentStep;
 
     @Getter
-    protected boolean isRunning;
+    protected int currentStep = 0;
+
+    @Getter
+    protected boolean isRunning = false;
 
     Sequence() {
         currentStep = 0;
@@ -17,7 +19,11 @@ public class Sequence {
 
 
     public int run() {
-        if (!isRunning || !steps.get(currentStep).run()) {
+        if (!isRunning){
+            return currentStep;
+        }
+
+        if (!steps.get(currentStep).run()) {
             return currentStep;
         }
 

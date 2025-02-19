@@ -24,6 +24,7 @@ public class VerticalLifter extends Lifter {
     @Getter
     Servo swivel;
 
+    @Getter
     Servo specimenClaw;
 
     @Getter
@@ -51,11 +52,16 @@ public class VerticalLifter extends Lifter {
         claw.setPosition(1);
 
         specimenClaw = Hardware.getSpecimenClaw();
+        specimenClaw.setPosition(1);
+    }
+
+    public static double heightToSteps(double height) {
+        return (height - 44) / 71 * 3500;
     }
 
     @Override
-    public void run(InputMap map, Sequence sequence) {
-        if (sequence == null || sequence.isRunning()) {
+    public void run(InputMap map, boolean sequenceActive) {
+        if (sequenceActive) {
             homingSequence();
             return;
         }

@@ -32,7 +32,7 @@ public abstract class Lifter {
 
     @Setter
     @Getter
-    protected boolean homingSequenceActive = true;
+    protected boolean homingSequenceActive = false;
 
     protected ElapsedTime accelerationTimer;
 
@@ -106,5 +106,5 @@ public abstract class Lifter {
         liftRight.setPower(calculatePower(posRight, posLeft, inputY));
     }
 
-    public abstract void run(InputMap map, Sequence sequence);
+    public abstract void run(InputMap map, boolean sequenceActive);
 }

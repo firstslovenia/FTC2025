@@ -32,7 +32,7 @@ public class SecondaryInputMap extends InputMap{
     }
 
     public boolean getPreparePickup() {
-        return gamepad.circle;
+        return gamepad.share;
     }
 
     public boolean getInitTransfer() {
@@ -40,14 +40,14 @@ public class SecondaryInputMap extends InputMap{
     }
 
     public boolean getSpecimenPickupTrigger() {
-        return gamepad.x;
+        return gamepad.cross;
     }
 
     public boolean getVibrate() {
         return gamepad.square;
     }
 
-    public boolean hangSpecimen() {
+    public boolean getHangSpecimen() {
         return gamepad.right_bumper;
     }
 

@@ -27,6 +27,7 @@ public class HorizontalLifter extends Lifter{
     @Getter
     Servo claw;
 
+    @Getter
     Servo clawSwivel;
 
     ElapsedTime extendLifterTimer;
@@ -54,10 +55,10 @@ public class HorizontalLifter extends Lifter{
         claw.setPosition(1);
 
         swivelServoLeft = Hardware.getHorizontalSwivelLeft();
-        swivelServoLeft.setPosition(degToServoPosSwivel(230));
+        swivelServoLeft.setPosition(degToServoPosSwivel(220));
 
         swivelServoRight = Hardware.getHorizontalSwivelRight();
-        swivelServoRight.setPosition(degToServoPosSwivel(230));
+        swivelServoRight.setPosition(degToServoPosSwivel(220));
 
         clawSwivel = Hardware.getHorizontalClawSwivel();
         clawSwivel.scaleRange(0.3333, 1);
@@ -99,22 +100,51 @@ public class HorizontalLifter extends Lifter{
         last_claw_swivel_change = InputMapper.getClawSwivel() != 0;
     }*/
 
+    private void updateIntake(SecondaryInputMap map) {
+        if (map.getPreparePickup()) {
+            swivelServoLeft.setPosition(degToServoPosSwivel(100));
+            swivelServoRight.setPosition(degToServoPosSwivel(100));
+            claw.setPosition(0.5);
+        }
+
+        if (map.getDropIntakeClaw()) {
+            swivelServoLeft.setPosition(degToServoPosSwivel(0));
+            swivelServoRight.setPosition(degToServoPosSwivel(0));
+        }
+
+        if(map.getCloseIntakeClaw()) {
+            claw.setPosition(1);
+        }
+
+        double swivelDir = map.getClawRotateRight() ? 1 : 0 - (map.getClawRotateLeft() ? 1 : 0);
+
+        if (swivelDir != 0 == last_claw_swivel_change) {
+            last_claw_swivel_change = swivelDir != 0;
+            return;
+        }
+
+        clawSwivel.setPosition(clawSwivel.getPosition() + degToServoPosClawSwivel(swivelDir * 30));
+
+        last_claw_swivel_change = swivelDir != 0;
+
+
+    }
+
     @Override
-    public void run(InputMap map, Sequence sequence) {
+    public void run(InputMap map, boolean sequenceActive) {
         if (map.getType() == InputMapType.OVERRIDE) {
             throw new RuntimeException("What the fuck this should not happen");
         }
 
-        if (sequence == null || sequence.isRunning()) {
+        if (sequenceActive) {
             homingSequence();
             return;
         }
 
         SecondaryInputMap secondaryInputMap = (SecondaryInputMap)map;
 
-        BetterTelemetry.print("state", transferState.name());
-
         run_motors(secondaryInputMap.getHorizontalLift());
+        updateIntake(secondaryInputMap);
         //run_swivel();
         //run_claw_swivel();
     }

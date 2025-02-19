@@ -52,7 +52,7 @@ public class TeleOp extends OpMode {
     @Override
     public void loop() {
         // Run Mechanisms
-        drivetrain.run();
+        drivetrain.run(primaryInputMap);
         verticalLifter.run(secondaryInputMap, transferSequence);
         horizontalLifter.run(secondaryInputMap, transferSequence);
     }
@@ -64,6 +64,4 @@ public class TeleOp extends OpMode {
     public void stop() {
 
     }
-
-    protected abstract void updateTelemetry();
 }

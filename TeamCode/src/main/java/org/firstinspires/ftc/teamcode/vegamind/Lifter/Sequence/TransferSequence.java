@@ -6,18 +6,19 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.vegamind.Lifter.HorizontalLifter;
 import org.firstinspires.ftc.teamcode.vegamind.Lifter.TransferState;
 import org.firstinspires.ftc.teamcode.vegamind.Lifter.VerticalLifter;
+import org.firstinspires.ftc.teamcode.vegamind.input.PrimaryInputMap;
 
 import java.util.Arrays;
 
 public class TransferSequence extends Sequence{
 
-    ElapsedTime verticalLiftGrace;
     ElapsedTime extendLifterTimer;
     ElapsedTime closeClawTime;
     ElapsedTime swingTimer;
-    ElapsedTime clawReleaseTimer;
+    ElapsedTime swivelSwingTimer;
 
-    public TransferSequence(HorizontalLifter horizontalLift, VerticalLifter verticalLift) {
+
+    public TransferSequence(HorizontalLifter horizontalLift, VerticalLifter verticalLift, PrimaryInputMap map) {
         super();
 
         Step primeLiftClaw = () -> {
@@ -26,14 +27,12 @@ public class TransferSequence extends Sequence{
             horizontalLift.getSwivelServoRight()
                     .setPosition(HorizontalLifter.degToServoPosSwivel(230));
 
-            horizontalLift.getLiftLeft().setTargetPosition(0);
-            horizontalLift.getLiftRight().setTargetPosition(0);
 
-            horizontalLift.getLiftLeft().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            horizontalLift.getLiftRight().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            horizontalLift.getLiftRight().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            horizontalLift.getLiftLeft().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            horizontalLift.getLiftLeft().setPower(1.0f);
-            horizontalLift.getLiftRight().setPower(1.0f);
+            horizontalLift.getLiftLeft().setPower(-1.0f);
+            horizontalLift.getLiftRight().setPower(-1.0f);
 
 
             verticalLift.setHomingSequenceActive(true);
@@ -41,16 +40,19 @@ public class TransferSequence extends Sequence{
             verticalLift.getSwivel().setPosition(1);
             verticalLift.getClaw().setPosition(1);
 
+            horizontalLift.getClawSwivel().setPosition(HorizontalLifter.degToServoPosClawSwivel(0));
+
             return true;
         };
 
         Step retractHorizontalLift = () -> {
-            if (horizontalLift.getLiftRight().getCurrentPosition() > 150) {
+            if (horizontalLift.getLiftRight().getCurrentPosition() > 200) {
                 return false;
             }
 
             horizontalLift.getLiftRight().setPower(0.0f);
             horizontalLift.getLiftLeft().setPower(0.0f);
+
 
             return true;
         };
@@ -80,6 +82,8 @@ public class TransferSequence extends Sequence{
             horizontalLift.getLiftLeft().setPower(1.0f);
             horizontalLift.getLiftRight().setPower(1.0f);
 
+            verticalLift.getSwivel().setPosition(0.95);
+
             if(horizontalLift.getSensorRight().getValue() != 0){
                 horizontalLift.reset_motors(true);
                 return true;
@@ -88,16 +92,30 @@ public class TransferSequence extends Sequence{
             return false;
         };
 
+        Step prepareClawsForTransfer = () -> {
+
+            verticalLift.getClaw().setPosition(1);
+            horizontalLift.getClaw().setPosition(0.5);
+
+
+
+            extendLifterTimer = new ElapsedTime();
+            closeClawTime = new ElapsedTime();
+
+            return map.getContinueTransferSequence();
+        };
+
         Step extendHorizontalLifter = () -> {
-            if (verticalLiftGrace == null) {
-                verticalLiftGrace = new ElapsedTime();
-            }
 
-            if(verticalLiftGrace.milliseconds() < 1000) {
-                extendLifterTimer = new ElapsedTime();
-                return false;
-            }
 
+            if (extendLifterTimer.milliseconds() > 500) {
+                extendLifterTimer = null;
+
+                horizontalLift.getLiftRight().setPower(0.0f);
+                horizontalLift.getLiftLeft().setPower(0.0f);
+
+                return true;
+            }
 
             horizontalLift.getLiftLeft().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             horizontalLift.getLiftRight().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -105,26 +123,9 @@ public class TransferSequence extends Sequence{
             horizontalLift.getLiftLeft().setPower(1.0);
             horizontalLift.getLiftRight().setPower(1.0);
 
-            horizontalLift.getClaw().setPosition(0.5);
-
-            if (extendLifterTimer.milliseconds() < 1000) {
-                return false;
-            }
-
-            horizontalLift.getLiftLeft().setPower(0);
-            horizontalLift.getLiftRight().setPower(0);
-
-            extendLifterTimer = null;
-            verticalLiftGrace = null;
 
 
-            if (closeClawTime == null) {
-                closeClawTime = new ElapsedTime();
-            }
-
-            verticalLift.getClaw().setPosition(1);
-
-            return true;
+            return false;
         };
 
         Step raiseVerticalLifter = () -> {
@@ -139,8 +140,8 @@ public class TransferSequence extends Sequence{
             verticalLift.getLiftLeft().setPower(1.0f);
             verticalLift.getLiftRight().setPower(1.0f);
 
-            if (verticalLift.getLiftRight().getCurrentPosition() < 3500 - 100
-                    &&  verticalLift.getLiftLeft().getCurrentPosition() < 3500 - 100) {
+            if (verticalLift.getLiftRight().getCurrentPosition() < 3500
+                    &&  verticalLift.getLiftLeft().getCurrentPosition() < 3500) {
                 return false;
             }
             verticalLift.getLiftLeft().setPower(0);
@@ -152,7 +153,11 @@ public class TransferSequence extends Sequence{
         };
 
         Step swingVerticalLifterArm = () -> {
-            verticalLift.getSwivel().setPosition(0);
+            if (verticalLift.getLiftRight().getCurrentPosition() < 2000) {
+                return false;
+            }
+
+            verticalLift.getSwivel().setPosition(0.4);
             swingTimer = new ElapsedTime();
 
             return true;
@@ -163,37 +168,52 @@ public class TransferSequence extends Sequence{
                 return false;
             }
 
-            verticalLift.getClaw().setPosition(0);
+            if (!map.getContinueTransferSequence()) {
+                return false;
+            }
 
-            clawReleaseTimer = new ElapsedTime();
+
+            swivelSwingTimer = new ElapsedTime();
+            verticalLift.getSwivel().setPosition(0);
+
             return true;
         };
 
         Step reset = () -> {
             horizontalLift.setHomingSequenceActive(true);
 
-            if(clawReleaseTimer.milliseconds() < 500) {
-                verticalLift.setHomingSequenceActive(true);
+            if(swivelSwingTimer == null) {
+                swivelSwingTimer = new ElapsedTime();
+            }
+
+            if(swivelSwingTimer.milliseconds() < 1000) {
                 return false;
             }
 
+            verticalLift.getClaw().setPosition(0);
+
+            if (!map.getContinueTransferSequence()) {
+                return false;
+            }
+
+            verticalLift.setHomingSequenceActive(true);
             verticalLift.getClaw().setPosition(1);
             verticalLift.getSwivel().setPosition(1);
 
-            if /*fuck you I'm not simplifying this*/ (!verticalLift.isHomingSequenceActive()) {
-                return true;
-            }
+            horizontalLift.getClaw().setPosition(1);
 
-            return false;
+            swivelSwingTimer = null;
+
+            return true;
         };
 
         steps = Arrays.asList(new Step[]{primeLiftClaw, retractHorizontalLift,
-                transferToVerticalLiftClaw, ramHorizontalLift, extendHorizontalLifter,
-                raiseVerticalLifter, swingVerticalLifterArm,
-                raiseVerticalLifter, releaseVerticalLifterArm, reset});
+                transferToVerticalLiftClaw, ramHorizontalLift, prepareClawsForTransfer,
+                extendHorizontalLifter, raiseVerticalLifter, swingVerticalLifterArm,
+                releaseVerticalLifterArm, reset});
     }
 
-    TransferState getState() {
+    public TransferState getState() {
         if (!isRunning) {
             return TransferState.NONE;
         }
@@ -204,9 +224,9 @@ public class TransferSequence extends Sequence{
             case 1:
                 return TransferState.RETRACT_HORIZONTAL_LIFT;
             case 2:
-                return TransferState.RAM_HORIZONTAL_LIFT;
-            case 3:
                 return TransferState.TRANSFER_TO_VERTICAL_LIFTER_CLAW;
+            case 3:
+                return TransferState.RAM_HORIZONTAL_LIFT;
             case 4:
                 return TransferState.EXTEND_HORIZONTAL_LIFTER;
             case 5:
@@ -219,8 +239,6 @@ public class TransferSequence extends Sequence{
                 return TransferState.RESET;
         }
 
-        throw new RuntimeException("Again what the hell did you do future me");
+        return TransferState.NONE;
     }
-
-
 }

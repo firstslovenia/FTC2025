@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class SecondaryInputMap extends InputMap{
 
+    double SPEED_MODIFIER = 0.3f;
+
     public SecondaryInputMap(Gamepad gamepad) {
         super(InputMapType.SECONDARY, gamepad);
     }
@@ -15,12 +17,12 @@ public class SecondaryInputMap extends InputMap{
 
     @Override
     public double getDriveX() {
-        return gamepad.left_stick_x;
+        return gamepad.left_stick_x * SPEED_MODIFIER;
     }
 
     @Override
     public double getDriveY() {
-        return gamepad.left_stick_y;
+        return gamepad.left_stick_y * SPEED_MODIFIER;
     }
 
     public double getHorizontalLift() {
@@ -61,6 +63,14 @@ public class SecondaryInputMap extends InputMap{
 
     public boolean getDropIntakeClaw() {
         return gamepad.dpad_down;
+    }
+
+    public boolean getRetractHorizontalSwivel() {
+        return gamepad.right_stick_button;
+    }
+
+    public boolean getCancelSequences() {
+        return gamepad.left_bumper;
     }
 
     public boolean getCloseIntakeClaw() {

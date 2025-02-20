@@ -10,14 +10,17 @@ import org.firstinspires.ftc.teamcode.vegamind.Lifter.Sequence.SpecimenSequence;
 import org.firstinspires.ftc.teamcode.vegamind.Lifter.Sequence.TransferSequence;
 import org.firstinspires.ftc.teamcode.vegamind.Lifter.VerticalLifter;
 import org.firstinspires.ftc.teamcode.vegamind.drivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.vegamind.drivetrain.FieldCentricDrivetrain;
 import org.firstinspires.ftc.teamcode.vegamind.drivetrain.RobotCentricDrivetrain;
 import org.firstinspires.ftc.teamcode.vegamind.input.PrimaryInputMap;
 import org.firstinspires.ftc.teamcode.vegamind.input.SecondaryInputMap;
 
+import java.lang.reflect.Field;
+
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Main OpMode")
 public class TeleOp extends OpMode {
     // === MECHANISMS ==============================================================================
-    private RobotCentricDrivetrain drivetrain;
+    private FieldCentricDrivetrain drivetrain;
     private VerticalLifter verticalLifter;
     private HorizontalLifter horizontalLifter;
 
@@ -39,12 +42,12 @@ public class TeleOp extends OpMode {
         horizontalLifter = new HorizontalLifter();
         verticalLifter = new VerticalLifter();
 
-        drivetrain = new RobotCentricDrivetrain(hardwareMap, Hardware.getImu());
+        drivetrain = new FieldCentricDrivetrain(hardwareMap, Hardware.getImu());
 
         primaryInputMap = new PrimaryInputMap(gamepad1);
         secondaryInputMap = new SecondaryInputMap(gamepad2);
 
-        transferSequence = new TransferSequence(horizontalLifter, verticalLifter, secondaryInputMap);
+        transferSequence = new TransferSequence(horizontalLifter, verticalLifter, primaryInputMap);
         specimenSequence = new SpecimenSequence(secondaryInputMap, verticalLifter);
 
         horizontalLifter.setHomingSequenceActive(true);
@@ -81,13 +84,33 @@ public class TeleOp extends OpMode {
             transferSequence.start();
         }
 
+        if (primaryInputMap.getVibrate()) {
+            gamepad2.rumble(500);
+        }
+
+        if (secondaryInputMap.getVibrate()) {
+            gamepad1.rumble(500);
+        }
+
+        if (secondaryInputMap.getCancelSequences() || primaryInputMap.getCancelSequences()) {
+            if (transferSequence.isRunning()) {
+                transferSequence.reset();
+            }
+
+            if (specimenSequence.isRunning()) {
+                specimenSequence.reset();
+            }
+        }
+
         transferSequence.run();
         specimenSequence.run();
 
         horizontalLifter.run(secondaryInputMap, transferSequence.isRunning() || specimenSequence.isRunning());
         verticalLifter.run(secondaryInputMap, transferSequence.isRunning() || specimenSequence.isRunning());
 
-        drivetrain.run(primaryInputMap);
+        drivetrain.run(primaryInputMap, secondaryInputMap);
+
+        BetterTelemetry.print(" transfer sequence state", transferSequence.getState()); //TODO find out why reset isn't working properly
     }
 
     /*

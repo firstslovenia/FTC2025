@@ -116,6 +116,11 @@ public class HorizontalLifter extends Lifter{
             claw.setPosition(1);
         }
 
+        if (map.getRetractHorizontalSwivel()) {
+            swivelServoLeft.setPosition(degToServoPosSwivel(180));
+            swivelServoRight.setPosition(degToServoPosSwivel(180));
+        }
+
         double swivelDir = map.getClawRotateRight() ? 1 : 0 - (map.getClawRotateLeft() ? 1 : 0);
 
         if (swivelDir != 0 == last_claw_swivel_change) {

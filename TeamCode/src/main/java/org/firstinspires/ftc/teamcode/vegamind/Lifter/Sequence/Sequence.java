@@ -41,7 +41,6 @@ public abstract class Sequence {
     }
 
     public void reset() {
-        currentStep = 0;
-        isRunning = false;
+        currentStep = steps.size()-1;
     }
 }

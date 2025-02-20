@@ -5,11 +5,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.vegamind.Hardware;
-import org.firstinspires.ftc.teamcode.vegamind.Lifter.Sequence.Sequence;
 import org.firstinspires.ftc.teamcode.vegamind.input.InputMap;
 import org.firstinspires.ftc.teamcode.vegamind.input.SecondaryInputMap;
-
-import java.nio.file.LinkPermission;
 
 import lombok.Getter;
 
@@ -61,7 +58,7 @@ public class VerticalLifter extends Lifter {
 
     @Override
     public void run(InputMap map, boolean sequenceActive) {
-        if (sequenceActive) {
+        if (sequenceActive || homingSequenceActive) {
             homingSequence();
             return;
         }

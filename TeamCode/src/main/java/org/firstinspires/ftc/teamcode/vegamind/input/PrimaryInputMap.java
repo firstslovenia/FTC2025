@@ -9,12 +9,12 @@ public class PrimaryInputMap extends InputMap{
 
     @Override
     public boolean getOverride() {
-        return gamepad.left_trigger == 1 && gamepad.right_trigger == 1;
+        return gamepad.circle && gamepad.share;
     }
 
     @Override
     public double getDriveX() {
-        return gamepad.left_stick_x;
+        return -gamepad.left_stick_x;
     }
 
     @Override
@@ -22,19 +22,24 @@ public class PrimaryInputMap extends InputMap{
         return -gamepad.left_stick_y;
     }
 
-    public boolean getPrimeBasket() {
+    public boolean getSlowdown() {
+        return gamepad.right_bumper;
+    }
+
+    public boolean getContinueTransferSequence() {
         return gamepad.triangle;
     }
 
-    public boolean getBasketClawRelease() {
-        return gamepad.x;
-    }
-
     public double getRotation() {
-       return gamepad.right_stick_x;
+       return gamepad.left_trigger - gamepad.right_trigger;
     }
 
     public boolean getVibrate() {
         return gamepad.square;
+    }
+
+
+    public boolean getCancelSequences() {
+        return gamepad.left_bumper;
     }
 }

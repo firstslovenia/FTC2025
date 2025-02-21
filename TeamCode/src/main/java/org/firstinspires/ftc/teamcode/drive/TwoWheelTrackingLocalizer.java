@@ -42,7 +42,7 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
     public static double PARALLEL_Y = 0; // Y is the strafe direction
 
     public static double PERPENDICULAR_X = 7;
-    public static double PERPENDICULAR_Y = 6.5;
+    public static double PERPENDICULAR_Y = 8;
 
     public static double X_MULTIPLIER = 0.999;
     public static double Y_MULTIPLIER = 1;
@@ -67,6 +67,7 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
 
         parallelEncoder.setDirection(Encoder.Direction.REVERSE);
         perpendicularEncoder.setDirection(Encoder.Direction.REVERSE);
+
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
     }

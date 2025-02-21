@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.vegamind.Lifter.Sequence;
 import java.util.List;
 
 import lombok.Getter;
+import lombok.Setter;
 
 public abstract class Sequence {
     protected List<Step> steps;
@@ -37,6 +38,11 @@ public abstract class Sequence {
     }
 
     public void start() {
+        isRunning = true;
+    }
+
+    public void setStep(int step) {
+        this.currentStep = step;
         isRunning = true;
     }
 

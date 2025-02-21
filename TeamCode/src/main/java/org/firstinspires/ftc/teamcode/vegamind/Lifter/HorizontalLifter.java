@@ -135,6 +135,10 @@ public class HorizontalLifter extends Lifter{
 
     }
 
+    public static double cmToSteps(double cm) {
+        return cm * (560/33);
+    }
+
     @Override
     public void run(InputMap map, boolean sequenceActive) {
         if (map.getType() == InputMapType.OVERRIDE) {

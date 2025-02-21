@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.vegamind.Lifter.Sequence.AutoTransferSequence;
 import org.firstinspires.ftc.teamcode.vegamind.Lifter.Sequence.Sequence;
 import org.firstinspires.ftc.teamcode.vegamind.Vtils;
 import org.firstinspires.ftc.teamcode.vegamind.input.InputMap;
@@ -35,6 +36,9 @@ public abstract class Lifter {
     protected boolean homingSequenceActive = false;
 
     protected ElapsedTime accelerationTimer;
+
+    @Setter
+    protected int autoHomePos;
 
      static TransferState transferState = TransferState.NONE;
 
@@ -84,10 +88,38 @@ public abstract class Lifter {
             return;
         }
 
-        liftLeft.setPower(-0.3f);
-        liftRight.setPower(-0.3f);
+        liftLeft.setPower(-1);
+        liftRight.setPower(-1f);
     }
 
+    public boolean homeToPosAuto(int pos) {
+        if (Math.abs(liftLeft.getCurrentPosition() - pos) < 40) {
+            liftRight.setPower(0.0f);
+            liftRight.setPower(0.0f);
+            return true;
+        }
+
+        if (liftLeft.getCurrentPosition() > pos) {
+            liftLeft.setPower(-1.0f);
+            liftRight.setPower(-1.0f);
+        } else {
+            liftLeft.setPower(1.0);
+            liftRight.setPower(1.0);
+        }
+
+        return false;
+    }
+
+    public void autoUpdate(AutoTransferSequence sequence) {
+        if (autoHomePos == -1 && !sequence.isRunning()) {
+            return;
+        }
+
+       if (homeToPosAuto(autoHomePos)) {
+           autoHomePos = -1;
+           return;
+       }
+    }
 
     protected void run_motors(double inputY) {
         if (homingSequenceActive) {

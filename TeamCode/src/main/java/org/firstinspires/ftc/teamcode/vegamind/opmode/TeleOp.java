@@ -59,8 +59,6 @@ public class TeleOp extends OpMode {
      */
     @Override
     public void init_loop() {
-        horizontalLifter.homingSequence();
-        verticalLifter.homingSequence();
     }
 
     /*
@@ -111,6 +109,7 @@ public class TeleOp extends OpMode {
         drivetrain.run(primaryInputMap, secondaryInputMap);
 
         BetterTelemetry.print(" transfer sequence state", transferSequence.getState()); //TODO find out why reset isn't working properly
+        BetterTelemetry.print("pos", horizontalLifter.getLiftRight().getCurrentPosition());
     }
 
     /*

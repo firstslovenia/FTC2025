@@ -6,13 +6,14 @@ public class BetterTelemetry {
     private static Telemetry telemetry;
     public static void init(Telemetry telemetry) {
         BetterTelemetry.telemetry = telemetry;
+        telemetry.setMsTransmissionInterval(250);
     }
 
-    static void print(String name, double data) {
+    public static <T> void print(String name, T data) {
         telemetry.addData(name, data);
     }
 
-    static void print(String name, boolean data) {
-        telemetry.addData(name, data);
+    public static void update() {
+        telemetry.update();
     }
 }

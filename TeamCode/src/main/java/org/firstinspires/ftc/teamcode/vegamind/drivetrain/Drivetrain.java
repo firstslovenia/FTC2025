@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.vegamind.Hardware;
+import org.firstinspires.ftc.teamcode.vegamind.input.PrimaryInputMap;
+import org.firstinspires.ftc.teamcode.vegamind.input.SecondaryInputMap;
 
 public abstract class Drivetrain extends SampleMecanumDrive {
     protected IMU imu;
@@ -24,5 +26,6 @@ public abstract class Drivetrain extends SampleMecanumDrive {
         rightFrontMotor = Hardware.getRightFrontMotor();
     }
 
-    public abstract void run(double inputX, double inputY, double inputRot);
+    public abstract void run(PrimaryInputMap primaryInputMap,
+                             SecondaryInputMap secondaryInputMap);
 }

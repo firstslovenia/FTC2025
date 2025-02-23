@@ -14,7 +14,8 @@ public class MeepMeepTesting {
 
     // Bot Params ----------------------------------------------------------------------------------
     private static final boolean isRed = false;
-    private static final boolean isBasketBot = true;
+
+    private static final boolean isBasketBot = false;
 
     // Positions -----------------------------------------------------------------------------------
     private static final Pose2d blockDropPose = getFieldPose2d(new Pose2d(52, 52, getRad(225)));
@@ -43,8 +44,10 @@ public class MeepMeepTesting {
      * @return Locally flipped Pose2d
      */
     public static Pose2d getAbsPose2d(Pose2d pose2d) {
-        if (!isRed) return pose2d;
-        return new Pose2d(-pose2d.getX(), -pose2d.getY());
+        if (isRed) return pose2d;
+        return new Pose2d(-pose2d.getX(), -pose2d.getY(), pose2d.getHeading());
+
+      
     }
 
     /**
@@ -52,6 +55,10 @@ public class MeepMeepTesting {
      * @return Pose2d on the field (flipped around field center)
      */
     public static Pose2d getFieldPose2d(Pose2d pose2d) {
+        if (!isBasketBot) {
+            pose2d = new Pose2d(-pose2d.getX(), pose2d.getY(), pose2d.getHeading());
+        }
+
         if (!isRed) return pose2d;
         return pose2d.plus(new Pose2d(
                 -2 * pose2d.getX(),
@@ -64,6 +71,11 @@ public class MeepMeepTesting {
      * @return Vector2d on the field (flipped around field center)
      */
     public static Vector2d getFieldVector2d(Vector2d vector2d) {
+
+        if (!isBasketBot) {
+            vector2d = new Vector2d(-vector2d.getX(), vector2d.getY());
+        }
+      
         if (!isRed) return vector2d;
         return vector2d.plus(new Vector2d(
                 -2 * vector2d.getX(),
@@ -98,56 +110,162 @@ public class MeepMeepTesting {
         return new Pose2d(getAbsPose2d(new Pose2d(blockOnFloorOffset)).getX() * blockIdx).plus(blockPickupPose);
     }
 
-    // =============================================================================================
     // MainShit ====================================================================================
     // =============================================================================================
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(1000);
+
+
+        System.out.println(
+                getBlockOnFloorPos(1).getX()
+        );
+
+        System.out.println(
+                getBlockOnFloorPos(1).getY()
+        );
 
         // =========================================================================================
         // Basket Side =============================================================================
         // =========================================================================================
         RoadRunnerBotEntity myBotBasket = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(39.4224324932042, 39.4224324932042, Math.toRadians(188.22825), Math.toRadians(188.22825), 12)
-                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(getFieldPose2d(new Pose2d(20, 61.5, getRad(90))))
+                .setConstraints(39.4224324932042, 39.4224324932042, 3.82, Math.toRadians(198.135), 13.65)
+                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(getFieldPose2d(new Pose2d(20, 61.5, getRad(270))))
+                        .setReversed(isRed)
+
                         // Block on bar ------------------------------------------------------------
-                        .lineToSplineHeading(getRungPos(0))
+                        .lineToConstantHeading(getRungPos(0).vec())
                         .addDisplacementMarker(MeepMeepTesting::blockRungDrop)
 
                         // Block No. 1 -------------------------------------------------------------
-                        .lineToSplineHeading(getRungPos(0).plus(getAbsPose2d(new Pose2d(10, 5))))
-                        .splineToSplineHeading(getBlockOnFloorPos(0), getRad(0))
+                        .lineToConstantHeading(getRungPos(0).vec().plus(getFieldPose2d(new Pose2d(0, 5)).vec()))
+                        .splineToConstantHeading(getBlockOnFloorPos(0).vec(), getRad(0))
                         .addDisplacementMarker(MeepMeepTesting::blockPickup)
 
-                        .setReversed(true)
-                        .lineToSplineHeading(blockDropPose)
+                        .turn(Math.toRadians(180))
+
+                        .lineToConstantHeading(blockDropPose.vec())
                         .addDisplacementMarker(MeepMeepTesting::blockBasketDrop)
+
+                        .turn(Math.toRadians(-45))
+
+                        .waitSeconds(1)
+
+                        .turn(Math.toRadians(45))
 
                         // Block No. 2 -------------------------------------------------------------
-                        .setReversed(true)
-                        .lineToSplineHeading(getBlockOnFloorPos(1))
+                        .lineToConstantHeading(getFieldVector2d(new Vector2d(58, 40)))
                         .addDisplacementMarker(MeepMeepTesting::blockPickup)
 
-                        .setReversed(true)
-                        .lineToSplineHeading(blockDropPose)
+                        .lineToConstantHeading(blockDropPose.vec())
                         .addDisplacementMarker(MeepMeepTesting::blockBasketDrop)
 
+
+                        .waitSeconds(1)
+                        .turn(Math.toRadians(-45))
+
                         // Block No. 3 -------------------------------------------------------------
-                        .lineToSplineHeading(getFieldPose2d(new Pose2d(52, 30, getRad(180))))
-                        .splineToConstantHeading(getFieldVector2d(new Vector2d(60.5, 15)), getRad(90))
-                        .splineToConstantHeading(getFieldVector2d(new Vector2d(60.5, 52)), getRad(90))
+                        .lineToConstantHeading(getFieldVector2d(new Vector2d(-55, 52)))
 
-                        .build());
-
+                                          
         // =========================================================================================
         // Bot for block pushing to zones ==========================================================
-        RoadRunnerBotEntity myBotZone = new DefaultBotBuilder(meepMeep)
-                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(39.4224324932042, 39.4224324932042, Math.toRadians(188.22825), Math.toRadians(188.22825), 12)
-                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(getFieldPose2d(new Pose2d(-20, 61.5, getRad(90))))
 
-                        .build());
+        boolean reverseRobot;
+        double turnAngle;
+        if (!isRed) {
+            reverseRobot = true;
+            turnAngle = 180;
+        } else {
+            turnAngle = 0;
+            reverseRobot = false;
+        }
+
+        RoadRunnerBotEntity myBotZone = new DefaultBotBuilder(meepMeep)
+
+    //            // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
+            .setConstraints(39.4224324932042, 39.4224324932042, 3.82, Math.toRadians(198.135), 13.65)
+            .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(getFieldPose2d(new Pose2d(20, 61.5, getRad(270))))
+                    .setReversed(reverseRobot)
+
+                    .lineToConstantHeading(
+                            MeepMeepTesting.rungStartingPose.vec()
+                    )
+
+                    .waitSeconds(1.5)
+
+//                    // BLOCK #1 ------------------------
+//                    .splineToConstantHeading(
+//                            getBlockOnFloorPos(0).plus(getFieldPose2d(new Pose2d(0, 0, getRad(90)))).vec(),
+//                            getRad(90)
+//                    )
+//
+//                    .turn(getRad(180))
+//
+//                    .waitSeconds(2)
+//
+//                    .splineToConstantHeading(
+//                            MeepMeepTesting.blockDropPose.plus(getFieldPose2d(new Pose2d(0, 0, getRad(0)))).vec(),
+//                            getRad(180)
+//                    )
+//
+//                    .turn(getRad(turnAngle))
+//
+//                    .waitSeconds(1)
+//
+//                    .turn(getRad(turnAngle))
+//
+//                    .lineToConstantHeading(
+//                            MeepMeepTesting.blockDropPose.plus(getFieldPose2d(new Pose2d(0, -5, getRad(0)))).vec()
+//                    )
+//
+//                    .waitSeconds(3)
+//
+//                    // BLOCK #2 ------------------------
+///*                    .splineToConstantHeading(
+//                            getBlockOnFloorPos(1).plus(getFieldPose2d(new Pose2d(-22.5, 10,getRad(0)))).vec(),
+//                            getRad(270)
+//                    )
+//
+//                    .splineToConstantHeading(
+//                            getBlockOnFloorPos(1).plus(getFieldPose2d(new Pose2d(-10, -30, 0))).vec(),
+//                            getRad(180)
+//                    )
+//
+//                    .splineToConstantHeading(
+//                            getBlockOnFloorPos(1).plus(getFieldPose2d(new Pose2d(-12, -30, getRad(0)))).vec(),
+//                            getRad(180)
+//                    )
+//
+//                    .splineToConstantHeading(
+//                            MeepMeepTesting.blockDropPose.plus(getFieldPose2d(new Pose2d(10, 0, getRad(0)))).vec(),
+//                            getRad(180)
+//                    )*/
+//
+//
+//                    // RUNG BLOCK #1 ----------
+//
+//                    .lineToConstantHeading(
+//                            MeepMeepTesting.blockDropPose.plus(getFieldPose2d(new Pose2d(8,8, getRad(0)))).vec()
+//                    )
+//
+//                    .lineToConstantHeading(
+//                            MeepMeepTesting.blockDropPose.plus(getFieldPose2d(new Pose2d(5,5, getRad(0)))).vec()
+//                    )
+//
+//                    .turn(Math.toRadians(180))
+//
+//                    .waitSeconds(1)
+//
+//                    .lineToConstantHeading(
+//                            MeepMeepTesting.rungStartingPose.vec()
+//                    )
+//
+//                    .waitSeconds(1)
+//
+//                    .lineToConstantHeading(blockDropPose.vec())
+//
+            .build());
 
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTOTHEDEEP_JUICE_DARK)

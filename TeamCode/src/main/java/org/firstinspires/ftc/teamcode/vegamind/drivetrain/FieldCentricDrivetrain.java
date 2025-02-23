@@ -5,10 +5,17 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.vegamind.input.PrimaryInputMap;
+import org.firstinspires.ftc.teamcode.vegamind.input.SecondaryInputMap;
 
 public class FieldCentricDrivetrain extends Drivetrain {
     public FieldCentricDrivetrain(HardwareMap hardwareMap, IMU imu) {
         super(hardwareMap, imu);
+    }
+
+    @Override
+    public void run(PrimaryInputMap primaryInputMap, SecondaryInputMap secondaryInputMap) {
+
     }
 
     public void run(double inputX, double inputY, double inputRot) {
@@ -26,9 +33,24 @@ public class FieldCentricDrivetrain extends Drivetrain {
         drive(move);
     }
 
-    public void run(double inputX, double inputY, double inputRot, boolean resetImu) {
-        if (resetImu) imu.resetYaw();
-        run(inputX, inputY, inputRot);
+    public void run(PrimaryInputMap primaryInputMap, SecondaryInputMap secondaryInputMap, boolean flipped) {
+        //if (map.isImuReset()) imu.resetYaw();
+
+        double x = primaryInputMap.getDriveY();
+        double y = primaryInputMap.getDriveX();
+        double rot = primaryInputMap.getRotation();
+
+        if (x == 0 && y == 0 && rot == 0) {
+            y = secondaryInputMap.getDriveX();
+            x = secondaryInputMap.getDriveY();
+        }
+
+        if (flipped) {
+            y *= -1;
+            x *= -1;
+        }
+
+        run(-x, -y, rot);
     }
 
     public void drive(Pose2d pose2d) {

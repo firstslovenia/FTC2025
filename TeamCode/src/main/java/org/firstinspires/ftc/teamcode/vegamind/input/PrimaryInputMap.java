@@ -1,37 +1,47 @@
 package org.firstinspires.ftc.teamcode.vegamind.input;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
-
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-public class PrimaryInputMap extends InputMap {
-    public PrimaryInputMap(Gamepad gamepad1, Gamepad gamepad2) {
-        super(gamepad1, gamepad2);
+public class PrimaryInputMap extends InputMap{
+    public PrimaryInputMap(Gamepad gamepad) {
+        super(InputMapType.PRIMARY, gamepad);
     }
 
     @Override
-    public double readDriveX() {
-        return gamepad1.left_stick_x;
+    public boolean getOverride() {
+        return gamepad.circle && gamepad.share;
     }
 
     @Override
-    public double readDriveY() {
-        return gamepad1.left_stick_y;
+    public double getDriveX() {
+        return gamepad.left_stick_x;
     }
 
     @Override
-    public double readDriveRot() {
-        return gamepad1.right_stick_x;
+    public double getDriveY() {
+        return gamepad.left_stick_y;
     }
 
-    @Override
-    public boolean readImuReset() {
-        return gamepad1.options;
+    public boolean getSlowdown() {
+        return gamepad.right_bumper;
     }
 
-    @Override
-    public double readLifterY() {
-        return gamepad2.right_stick_y;
+    public boolean getContinueTransferSequence() {
+        return gamepad.triangle;
+    }
+
+    public double getRotation() {
+       return gamepad.left_trigger - gamepad.right_trigger;
+    }
+
+    public boolean getVibrate() {
+        return gamepad.square;
+    }
+
+    public boolean getIMUReset() { return gamepad.left_stick_button; }
+
+
+    public boolean getCancelSequences() {
+        return gamepad.left_bumper;
     }
 }

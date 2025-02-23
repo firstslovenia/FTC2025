@@ -1,22 +1,27 @@
 package org.firstinspires.ftc.teamcode.vegamind.input;
 
+import android.renderscript.ScriptGroup;
+
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import lombok.Getter;
+import lombok.Setter;
 
 public abstract class InputMap {
-    final protected Gamepad gamepad1;
-    final protected Gamepad gamepad2;
 
-    InputMap(Gamepad gamepad1, Gamepad gamepad2) {
-        this.gamepad1 = gamepad1;
-        this.gamepad2 = gamepad2;
+    @Getter
+    protected InputMapType type;
+
+    @Setter
+    protected Gamepad gamepad;
+
+    InputMap(InputMapType type, Gamepad gamepad) {
+        this.type = type;
+        this.gamepad = gamepad;
     }
 
-    abstract public double readDriveX();
-    abstract public double readDriveY();
-    abstract public double readDriveRot();
-    abstract public boolean readImuReset();
 
-    abstract public double readLifterY();
+    public abstract boolean getOverride();
+    public abstract double getDriveX();
+    public abstract double getDriveY();
 }

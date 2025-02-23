@@ -12,35 +12,36 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 /*
- * This is a simple routine to test translational drive capabilities.
- */
+* This is a simple routine to test translational drive capabilities.
+*/
 @Config
 @Autonomous(group = "drive")
 public class StrafeTest extends LinearOpMode {
-    public static double DISTANCE = 60; // in
+public static double DISTANCE = 60; // in
 
-    @Override
-    public void runOpMode() throws InterruptedException {
-        Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+@Override
+public void runOpMode() throws InterruptedException {
+    Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+    SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
-                .strafeRight(DISTANCE)
-                .build();
 
-        waitForStart();
+    Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
+            .strafeRight(DISTANCE)
+            .build();
 
-        if (isStopRequested()) return;
+    waitForStart();
 
-        drive.followTrajectory(trajectory);
+    if (isStopRequested()) return;
 
-        Pose2d poseEstimate = drive.getPoseEstimate();
-        telemetry.addData("finalX", poseEstimate.getX());
-        telemetry.addData("finalY", poseEstimate.getY());
-        telemetry.addData("finalHeading", poseEstimate.getHeading());
-        telemetry.update();
+    drive.followTrajectory(trajectory);
 
-        while (!isStopRequested() && opModeIsActive()) ;
-    }
+    Pose2d poseEstimate = drive.getPoseEstimate();
+    telemetry.addData("finalX", poseEstimate.getX());
+    telemetry.addData("finalY", poseEstimate.getY());
+    telemetry.addData("finalHeading", poseEstimate.getHeading());
+    telemetry.update();
+
+    while (!isStopRequested() && opModeIsActive()) ;
+}
 }

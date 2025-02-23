@@ -14,6 +14,7 @@ public class MeepMeepTesting {
 
     // Bot Params ----------------------------------------------------------------------------------
     private static final boolean isRed = false;
+
     private static final boolean isBasketBot = false;
 
     // Positions -----------------------------------------------------------------------------------
@@ -45,6 +46,8 @@ public class MeepMeepTesting {
     public static Pose2d getAbsPose2d(Pose2d pose2d) {
         if (isRed) return pose2d;
         return new Pose2d(-pose2d.getX(), -pose2d.getY(), pose2d.getHeading());
+
+      
     }
 
     /**
@@ -68,10 +71,11 @@ public class MeepMeepTesting {
      * @return Vector2d on the field (flipped around field center)
      */
     public static Vector2d getFieldVector2d(Vector2d vector2d) {
+
         if (!isBasketBot) {
             vector2d = new Vector2d(-vector2d.getX(), vector2d.getY());
         }
-
+      
         if (!isRed) return vector2d;
         return vector2d.plus(new Vector2d(
                 -2 * vector2d.getX(),
@@ -105,10 +109,12 @@ public class MeepMeepTesting {
     private static Pose2d getBlockOnFloorPos(int blockIdx) {
         return new Pose2d(getAbsPose2d(new Pose2d(blockOnFloorOffset)).getX() * blockIdx).plus(blockPickupPose);
     }
+
     // MainShit ====================================================================================
     // =============================================================================================
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(1000);
+
 
         System.out.println(
                 getBlockOnFloorPos(1).getX()
@@ -161,8 +167,7 @@ public class MeepMeepTesting {
                         // Block No. 3 -------------------------------------------------------------
                         .lineToConstantHeading(getFieldVector2d(new Vector2d(-55, 52)))
 
-                        .build());
-
+                                          
         // =========================================================================================
         // Bot for block pushing to zones ==========================================================
 
@@ -177,6 +182,7 @@ public class MeepMeepTesting {
         }
 
         RoadRunnerBotEntity myBotZone = new DefaultBotBuilder(meepMeep)
+
     //            // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
             .setConstraints(39.4224324932042, 39.4224324932042, 3.82, Math.toRadians(198.135), 13.65)
             .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(getFieldPose2d(new Pose2d(20, 61.5, getRad(270))))
@@ -260,7 +266,6 @@ public class MeepMeepTesting {
 //                    .lineToConstantHeading(blockDropPose.vec())
 //
             .build());
-
 
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTOTHEDEEP_JUICE_DARK)

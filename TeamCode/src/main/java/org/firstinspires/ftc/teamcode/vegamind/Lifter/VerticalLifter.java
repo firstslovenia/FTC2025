@@ -58,10 +58,7 @@ public class VerticalLifter extends Lifter {
 
     @Override
     public void run(InputMap map, boolean sequenceActive) {
-        if (sequenceActive || homingSequenceActive) {
-            homingSequence();
-            return;
-        }
+        homingSequence();
 
         SecondaryInputMap inputMap = (SecondaryInputMap)map;
     }

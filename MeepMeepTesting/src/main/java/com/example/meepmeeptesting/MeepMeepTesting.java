@@ -14,7 +14,7 @@ public class MeepMeepTesting {
 
     // Bot Params ----------------------------------------------------------------------------------
     private static final boolean isRed = false;
-    private static final boolean isBasketBot = true;
+    private static final boolean isBasketBot = false;
 
     // Positions -----------------------------------------------------------------------------------
     private static final Pose2d blockDropPose = getFieldPose2d(new Pose2d(52, 52, getRad(225)));
@@ -188,77 +188,77 @@ public class MeepMeepTesting {
 
                     .waitSeconds(1.5)
 
-                    // BLOCK #1 ------------------------
-                    .splineToConstantHeading(
-                            getBlockOnFloorPos(0).plus(getFieldPose2d(new Pose2d(0, 0, getRad(90)))).vec(),
-                            getRad(90)
-                    )
-
-                    .turn(getRad(180))
-
-                    .waitSeconds(2)
-
-                    .splineToConstantHeading(
-                            MeepMeepTesting.blockDropPose.plus(getFieldPose2d(new Pose2d(0, 0, getRad(0)))).vec(),
-                            getRad(180)
-                    )
-
-                    .turn(getRad(turnAngle))
-
-                    .waitSeconds(1)
-
-                    .turn(getRad(turnAngle))
-
-                    .lineToConstantHeading(
-                            MeepMeepTesting.blockDropPose.plus(getFieldPose2d(new Pose2d(0, -5, getRad(0)))).vec()
-                    )
-
-                    .waitSeconds(3)
-
-                    // BLOCK #2 ------------------------
-/*                    .splineToConstantHeading(
-                            getBlockOnFloorPos(1).plus(getFieldPose2d(new Pose2d(-22.5, 10,getRad(0)))).vec(),
-                            getRad(270)
-                    )
-
-                    .splineToConstantHeading(
-                            getBlockOnFloorPos(1).plus(getFieldPose2d(new Pose2d(-10, -30, 0))).vec(),
-                            getRad(180)
-                    )
-
-                    .splineToConstantHeading(
-                            getBlockOnFloorPos(1).plus(getFieldPose2d(new Pose2d(-12, -30, getRad(0)))).vec(),
-                            getRad(180)
-                    )
-
-                    .splineToConstantHeading(
-                            MeepMeepTesting.blockDropPose.plus(getFieldPose2d(new Pose2d(10, 0, getRad(0)))).vec(),
-                            getRad(180)
-                    )*/
-
-
-                    // RUNG BLOCK #1 ----------
-
-                    .lineToConstantHeading(
-                            MeepMeepTesting.blockDropPose.plus(getFieldPose2d(new Pose2d(8,8, getRad(0)))).vec()
-                    )
-
-                    .lineToConstantHeading(
-                            MeepMeepTesting.blockDropPose.plus(getFieldPose2d(new Pose2d(5,5, getRad(0)))).vec()
-                    )
-
-                    .turn(Math.toRadians(180))
-
-                    .waitSeconds(1)
-
-                    .lineToConstantHeading(
-                            MeepMeepTesting.rungStartingPose.vec()
-                    )
-
-                    .waitSeconds(1)
-
-                    .lineToConstantHeading(blockDropPose.vec())
-
+//                    // BLOCK #1 ------------------------
+//                    .splineToConstantHeading(
+//                            getBlockOnFloorPos(0).plus(getFieldPose2d(new Pose2d(0, 0, getRad(90)))).vec(),
+//                            getRad(90)
+//                    )
+//
+//                    .turn(getRad(180))
+//
+//                    .waitSeconds(2)
+//
+//                    .splineToConstantHeading(
+//                            MeepMeepTesting.blockDropPose.plus(getFieldPose2d(new Pose2d(0, 0, getRad(0)))).vec(),
+//                            getRad(180)
+//                    )
+//
+//                    .turn(getRad(turnAngle))
+//
+//                    .waitSeconds(1)
+//
+//                    .turn(getRad(turnAngle))
+//
+//                    .lineToConstantHeading(
+//                            MeepMeepTesting.blockDropPose.plus(getFieldPose2d(new Pose2d(0, -5, getRad(0)))).vec()
+//                    )
+//
+//                    .waitSeconds(3)
+//
+//                    // BLOCK #2 ------------------------
+///*                    .splineToConstantHeading(
+//                            getBlockOnFloorPos(1).plus(getFieldPose2d(new Pose2d(-22.5, 10,getRad(0)))).vec(),
+//                            getRad(270)
+//                    )
+//
+//                    .splineToConstantHeading(
+//                            getBlockOnFloorPos(1).plus(getFieldPose2d(new Pose2d(-10, -30, 0))).vec(),
+//                            getRad(180)
+//                    )
+//
+//                    .splineToConstantHeading(
+//                            getBlockOnFloorPos(1).plus(getFieldPose2d(new Pose2d(-12, -30, getRad(0)))).vec(),
+//                            getRad(180)
+//                    )
+//
+//                    .splineToConstantHeading(
+//                            MeepMeepTesting.blockDropPose.plus(getFieldPose2d(new Pose2d(10, 0, getRad(0)))).vec(),
+//                            getRad(180)
+//                    )*/
+//
+//
+//                    // RUNG BLOCK #1 ----------
+//
+//                    .lineToConstantHeading(
+//                            MeepMeepTesting.blockDropPose.plus(getFieldPose2d(new Pose2d(8,8, getRad(0)))).vec()
+//                    )
+//
+//                    .lineToConstantHeading(
+//                            MeepMeepTesting.blockDropPose.plus(getFieldPose2d(new Pose2d(5,5, getRad(0)))).vec()
+//                    )
+//
+//                    .turn(Math.toRadians(180))
+//
+//                    .waitSeconds(1)
+//
+//                    .lineToConstantHeading(
+//                            MeepMeepTesting.rungStartingPose.vec()
+//                    )
+//
+//                    .waitSeconds(1)
+//
+//                    .lineToConstantHeading(blockDropPose.vec())
+//
             .build());
 
 

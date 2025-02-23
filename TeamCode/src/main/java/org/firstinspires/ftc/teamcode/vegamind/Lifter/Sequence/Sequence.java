@@ -9,9 +9,11 @@ public abstract class Sequence {
     protected List<Step> steps;
 
     @Getter
+    @Setter
     protected int currentStep = 0;
 
     @Getter
+    @Setter
     protected boolean isRunning = false;
 
     Sequence() {

@@ -60,8 +60,11 @@ public class SpecimenSequence extends Sequence {
 
         Step canRaiseLifter = () -> {
             verticalLift.getSpecimenClaw().setPosition(1);
-            if (closeClawTimer.milliseconds() < 1000) {
-                return false;
+
+            if (closeClawTimer != null){
+                if (closeClawTimer.milliseconds() < 1000) {
+                    return false;
+                }
             }
 
             if(verticalLift.getLiftRight().getCurrentPosition() >= VerticalLifter.heightToSteps(60)

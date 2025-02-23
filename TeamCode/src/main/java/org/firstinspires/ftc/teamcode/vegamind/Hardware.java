@@ -62,9 +62,17 @@ public class Hardware {
             LOGO_FACING_DIR,
             USB_FACING_DIR));
 
-    public static void init(HardwareMap hardwareMap) {
+    public static void init(HardwareMap hardwareMap, boolean flip) {
+
+        if (flip) {
+
+            imuParameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                    RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                    USB_FACING_DIR));
+        }
+
         // Imu
-        imu = hardwareMap.get(IMU .class, "imu");
+        imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(imuParameters);
 
         // Drive Motors

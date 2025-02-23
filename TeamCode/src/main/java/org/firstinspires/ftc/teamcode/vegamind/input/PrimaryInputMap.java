@@ -14,12 +14,12 @@ public class PrimaryInputMap extends InputMap{
 
     @Override
     public double getDriveX() {
-        return -gamepad.left_stick_x;
+        return gamepad.left_stick_x;
     }
 
     @Override
     public double getDriveY() {
-        return -gamepad.left_stick_y;
+        return gamepad.left_stick_y;
     }
 
     public boolean getSlowdown() {
@@ -37,6 +37,8 @@ public class PrimaryInputMap extends InputMap{
     public boolean getVibrate() {
         return gamepad.square;
     }
+
+    public boolean getIMUReset() { return gamepad.left_stick_button; }
 
 
     public boolean getCancelSequences() {

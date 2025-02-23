@@ -16,12 +16,27 @@ public class TransferSequence extends Sequence{
     ElapsedTime closeClawTime;
     ElapsedTime swingTimer;
     ElapsedTime swivelSwingTimer;
+    ElapsedTime horizontalSwingTimer;
 
+    boolean cancelled = true;
 
     public TransferSequence(HorizontalLifter horizontalLift, VerticalLifter verticalLift, PrimaryInputMap map) {
         super();
 
         Step primeLiftClaw = () -> {
+            cancelled = true;
+
+            if (horizontalSwingTimer == null) {
+                horizontalSwingTimer = new ElapsedTime();
+            }
+
+            verticalLift.getSwivel().setPosition(1);
+            verticalLift.getClaw().setPosition(1);
+
+            if (horizontalSwingTimer.milliseconds() < 300) {
+                return false;
+            }
+
             horizontalLift.getSwivelServoLeft()
                     .setPosition(HorizontalLifter.degToServoPosSwivel(230));
             horizontalLift.getSwivelServoRight()
@@ -37,16 +52,15 @@ public class TransferSequence extends Sequence{
 
             verticalLift.setHomingSequenceActive(true);
 
-            verticalLift.getSwivel().setPosition(1);
-            verticalLift.getClaw().setPosition(1);
-
             horizontalLift.getClawSwivel().setPosition(HorizontalLifter.degToServoPosClawSwivel(0));
+
+            horizontalSwingTimer = null;
 
             return true;
         };
 
         Step retractHorizontalLift = () -> {
-            if (horizontalLift.getLiftRight().getCurrentPosition() > 200) {
+            if (horizontalLift.getLiftRight().getCurrentPosition() > 170) {
                 return false;
             }
 
@@ -153,10 +167,6 @@ public class TransferSequence extends Sequence{
         };
 
         Step swingVerticalLifterArm = () -> {
-            if (verticalLift.getLiftRight().getCurrentPosition() < 2000) {
-                return false;
-            }
-
             verticalLift.getSwivel().setPosition(0.4);
             swingTimer = new ElapsedTime();
 
@@ -164,7 +174,7 @@ public class TransferSequence extends Sequence{
         };
 
         Step releaseVerticalLifterArm = () -> {
-            if (swingTimer.milliseconds() < 1000) {
+            if (swingTimer.milliseconds() < 500) {
                 return false;
             }
 
@@ -176,6 +186,8 @@ public class TransferSequence extends Sequence{
             swivelSwingTimer = new ElapsedTime();
             verticalLift.getSwivel().setPosition(0);
 
+            cancelled = false;
+
             return true;
         };
 
@@ -186,13 +198,13 @@ public class TransferSequence extends Sequence{
                 swivelSwingTimer = new ElapsedTime();
             }
 
-            if(swivelSwingTimer.milliseconds() < 1000) {
+            if(swivelSwingTimer.milliseconds() < 500) {
                 return false;
             }
 
             verticalLift.getClaw().setPosition(0);
 
-            if (!map.getContinueTransferSequence()) {
+            if (!map.getContinueTransferSequence() && !cancelled) {
                 return false;
             }
 

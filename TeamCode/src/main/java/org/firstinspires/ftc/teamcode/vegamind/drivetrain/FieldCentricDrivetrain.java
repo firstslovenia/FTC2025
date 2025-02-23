@@ -13,6 +13,11 @@ public class FieldCentricDrivetrain extends Drivetrain {
         super(hardwareMap, imu);
     }
 
+    @Override
+    public void run(PrimaryInputMap primaryInputMap, SecondaryInputMap secondaryInputMap) {
+
+    }
+
     public void run(double inputX, double inputY, double inputRot) {
         double robotDirection = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
@@ -28,7 +33,7 @@ public class FieldCentricDrivetrain extends Drivetrain {
         drive(move);
     }
 
-    public void run(PrimaryInputMap primaryInputMap, SecondaryInputMap secondaryInputMap) {
+    public void run(PrimaryInputMap primaryInputMap, SecondaryInputMap secondaryInputMap, boolean flipped) {
         //if (map.isImuReset()) imu.resetYaw();
 
         double x = primaryInputMap.getDriveY();
@@ -40,7 +45,12 @@ public class FieldCentricDrivetrain extends Drivetrain {
             x = secondaryInputMap.getDriveY();
         }
 
-        run(x, y, rot);
+        if (flipped) {
+            y *= -1;
+            x *= -1;
+        }
+
+        run(-x, -y, rot);
     }
 
     public void drive(Pose2d pose2d) {

@@ -88,11 +88,12 @@ public abstract class Lifter {
             return;
         }
 
-        liftLeft.setPower(-1);
-        liftRight.setPower(-1f);
+        liftLeft.setPower(-0.3);
+        liftRight.setPower(-0.3);
     }
 
     public boolean homeToPosAuto(int pos) {
+
         if (Math.abs(liftLeft.getCurrentPosition() - pos) < 40) {
             liftRight.setPower(0.0f);
             liftRight.setPower(0.0f);
@@ -111,7 +112,7 @@ public abstract class Lifter {
     }
 
     public void autoUpdate(AutoTransferSequence sequence) {
-        if (autoHomePos == -1 && !sequence.isRunning()) {
+        if (autoHomePos == -1 || sequence.isRunning()) {
             return;
         }
 

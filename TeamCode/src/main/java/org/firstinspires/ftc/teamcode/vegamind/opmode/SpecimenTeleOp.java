@@ -5,20 +5,16 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.vegamind.BetterTelemetry;
 import org.firstinspires.ftc.teamcode.vegamind.Hardware;
 import org.firstinspires.ftc.teamcode.vegamind.Lifter.HorizontalLifter;
-import org.firstinspires.ftc.teamcode.vegamind.Lifter.Sequence.Sequence;
 import org.firstinspires.ftc.teamcode.vegamind.Lifter.Sequence.SpecimenSequence;
 import org.firstinspires.ftc.teamcode.vegamind.Lifter.Sequence.TransferSequence;
+import org.firstinspires.ftc.teamcode.vegamind.Lifter.TransferState;
 import org.firstinspires.ftc.teamcode.vegamind.Lifter.VerticalLifter;
-import org.firstinspires.ftc.teamcode.vegamind.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.vegamind.drivetrain.FieldCentricDrivetrain;
-import org.firstinspires.ftc.teamcode.vegamind.drivetrain.RobotCentricDrivetrain;
 import org.firstinspires.ftc.teamcode.vegamind.input.PrimaryInputMap;
 import org.firstinspires.ftc.teamcode.vegamind.input.SecondaryInputMap;
 
-import java.lang.reflect.Field;
-
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Main OpMode")
-public class TeleOp extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "SPECIMEN Main OpMode")
+public class SpecimenTeleOp extends OpMode {
     // === MECHANISMS ==============================================================================
     private FieldCentricDrivetrain drivetrain;
     private VerticalLifter verticalLifter;
@@ -36,7 +32,7 @@ public class TeleOp extends OpMode {
 
     @Override
     public void init() {
-        Hardware.init(hardwareMap);
+        Hardware.init(hardwareMap, true);
         BetterTelemetry.init(telemetry);
 
         horizontalLifter = new HorizontalLifter();
@@ -51,7 +47,10 @@ public class TeleOp extends OpMode {
         specimenSequence = new SpecimenSequence(secondaryInputMap, verticalLifter);
 
         horizontalLifter.setHomingSequenceActive(true);
-        verticalLifter.setHomingSequenceActive(true);
+        //  verticalLifter.setHomingSequenceActive(true);
+
+        specimenSequence.setStep(2);
+        specimenSequence.setRunning(true);
     }
 
     /*
@@ -74,11 +73,16 @@ public class TeleOp extends OpMode {
     public void loop() {
         // Run Mechanisms
     //    drivetrain.run(primaryInputMap);
+
+        if (primaryInputMap.getIMUReset()) {
+            Hardware.getImu().resetYaw();
+        }
+
         if (secondaryInputMap.getSpecimenPickupTrigger() && !specimenSequence.isRunning()) {
             specimenSequence.start();
         }
 
-        if (secondaryInputMap.getInitTransfer() && !transferSequence.isRunning()) {
+        if (secondaryInputMap.getInitTransfer() && !transferSequence.isRunning() && horizontalLifter.getClaw().getPosition() == 1.0) {
             transferSequence.start();
         }
 
@@ -103,10 +107,10 @@ public class TeleOp extends OpMode {
         transferSequence.run();
         specimenSequence.run();
 
-        horizontalLifter.run(secondaryInputMap, transferSequence.isRunning() || specimenSequence.isRunning());
-        verticalLifter.run(secondaryInputMap, transferSequence.isRunning() || specimenSequence.isRunning());
+        horizontalLifter.run(secondaryInputMap, (transferSequence.isRunning() && transferSequence.getState() != TransferState.RESET) || specimenSequence.isRunning());
+        verticalLifter.run(secondaryInputMap, (transferSequence.isRunning() && transferSequence.getState() != TransferState.RESET) || specimenSequence.isRunning());
 
-        drivetrain.run(primaryInputMap, secondaryInputMap);
+        drivetrain.run(primaryInputMap, secondaryInputMap, true);
 
         BetterTelemetry.print(" transfer sequence state", transferSequence.getState()); //TODO find out why reset isn't working properly
         BetterTelemetry.print("pos", horizontalLifter.getLiftRight().getCurrentPosition());

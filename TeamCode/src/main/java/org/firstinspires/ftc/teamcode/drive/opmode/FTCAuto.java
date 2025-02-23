@@ -27,7 +27,7 @@ import java.util.Queue;
 @Autonomous(name = "FTCAuto", group = "drive")
 public class FTCAuto extends LinearOpMode {
 
-    private static final boolean isRed = true;
+    private static final boolean isRed = false;
     private static final boolean isBasketBot = false;
 
     // Positions -----------------------------------------------------------------------------------
@@ -125,7 +125,7 @@ public class FTCAuto extends LinearOpMode {
         boolean reverseRobot;
         double turnAngle;
 
-        Hardware.init(hardwareMap);
+        Hardware.init(hardwareMap, false);
 
         VerticalLifter verticalLift = new VerticalLifter();
         HorizontalLifter horizontalLift = new HorizontalLifter();
@@ -143,7 +143,7 @@ public class FTCAuto extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        TrajectorySequence myBotBasket = drive.trajectorySequenceBuilder(new Pose2d(20, 61.5, getRad(270)))
+        TrajectorySequence myBotBasket = drive.trajectorySequenceBuilder(new Pose2d(20, 61.5, getRad(0)))
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 // Block on bar ------------------------------------------------------------
 
@@ -242,23 +242,28 @@ public class FTCAuto extends LinearOpMode {
         // Bot for block pushing to zones ==========================================================
 
 
-        TrajectorySequence myBotZone = drive.trajectorySequenceBuilder(new Pose2d(20, 61.5, getRad(270)))
+        TrajectorySequence myBotZone = drive.trajectorySequenceBuilder(new Pose2d(20, 61.5, getRad(0)))
                 //            // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setReversed(reverseRobot)
 
+                .forward(100)
 
-                .addDisplacementMarker(() -> {
-                    verticalLift.setAutoHomePos((int)VerticalLifter.heightToSteps(95));
-                })
-
-                .lineToConstantHeading(getRungPos(0).vec())
-
-                .addDisplacementMarker(() -> {
-                    verticalLift.setAutoHomePos((int)VerticalLifter.heightToSteps(44));
-                    verticalLift.getSpecimenClaw().setPosition(0.5); //TODO a delay???
-                })
-
-                .waitSeconds(1.5)
+//                .back(100)
+//
+//                .addDisplacementMarker(() -> {
+//                    verticalLift.setAutoHomePos((int)VerticalLifter.heightToSteps(95));
+//                })
+//
+//            //    .lineToConstantHeading(getRungPos(0).vec())
+//
+//                .waitSeconds(6)
+//
+//                .addDisplacementMarker(() -> {
+//                    verticalLift.setAutoHomePos((int)VerticalLifter.heightToSteps(44));
+//                    verticalLift.getSpecimenClaw().setPosition(0.5); //TODO a delay???
+//                })
+//
+//                .waitSeconds(1.5)
 
                 // BLOCK #1 ------------------------
 
@@ -352,13 +357,14 @@ public class FTCAuto extends LinearOpMode {
 //
                 .build();
 
-                if (!isStopRequested()) {
+                waitForStart();
+
+                while (!isStopRequested()) {
                     drive.followTrajectorySequence(isBasketBot ? myBotBasket : myBotZone);
 
-                    verticalLift.autoUpdate(autoTransferSequence);
-                    horizontalLift.autoUpdate(autoTransferSequence);
 
-                    autoTransferSequence.run();
+                    telemetry.addData("efwef", verticalLift.getLiftLeft().getCurrentPosition());
+                    telemetry.update();
                 }
     }
 }
